@@ -1,0 +1,31 @@
+;; shadow-cljs configuration
+{:source-paths ["src"]
+
+ :dependencies [[reagent "0.8.1"]
+                [re-frame "0.10.5"]
+                [day8.re-frame/trace "0.1.19-react16"]
+                [re-view/re-frame-simple "0.1.4"]
+                [binaryage/devtools "0.9.7"]
+                [secretary "1.2.3"]
+                ]
+
+ ;; set an nrepl port for connection to a REPL.
+ :nrepl {:port 8777}
+ :builds {:main {:target :node-script
+                 :output-to "resources/main.js"
+                 :main app.main.core/main}
+
+          :renderer {:target :browser
+                     :output-dir "resources/public/js"
+                     :asset-path "js"
+
+                     :modules {:renderer {:entries [app.renderer.core]}}
+
+                     :compiler-options {:closure-warnings {:global-this :off}
+                                        :closure-defines {re-frame.trace.trace-enabled? true}}
+
+                     :devtools {:before-load app.renderer.core/stop
+                                :after-load app.renderer.core/start
+                                :preloads [devtools.preload
+                                           day8.re-frame.trace.preload]}}}}
+

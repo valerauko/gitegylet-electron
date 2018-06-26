@@ -1,0 +1,18 @@
+# shadow-electron-starter
+ClojureScript + Shadow-cljs + Electron + re-frame
+
+## How to Run
+```
+npm install electron-prebuilt -g
+npm install shadow-cljs -g
+npm install
+
+npm run dev
+electorn .
+```
+
+## Release
+```
+npm run build
+electron-packager . HelloWorld --platform=darwin --arch=x64 --version=1.4.13
+```
