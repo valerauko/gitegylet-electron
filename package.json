@@ -7,19 +7,21 @@
     "dev": "./node_modules/.bin/shadow-cljs watch main renderer",
     "build": "./node_modules/.bin/shadow-cljs compile main renderer",
     "release": "./node_modules/.bin/shadow-cljs release main renderer",
-    "clean": "rm -rf resources/public/js/* && rm -rf target"
+    "clean": "rm -rf resources/public/js/* && rm -rf target",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "keywords": [],
   "author": "chimez <chimez@163.com>",
   "license": "ISC",
   "devDependencies": {
+    "electron": "^2.0.3",
+    "electron-builder": "^20.17.2",
     "source-map-support": "^0.4.18",
     "ws": "^3.2.0"
   },
   "dependencies": {
     "create-react-class": "^15.6.2",
-    "electron": "^2.0.3",
-    "nedb": "^1.8.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-flip-move": "^3.0.2",

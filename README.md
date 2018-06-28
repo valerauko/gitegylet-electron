@@ -3,7 +3,7 @@ ClojureScript + Shadow-cljs + Electron + re-frame
 
 ## How to Run
 ```
-npm install electron-prebuilt -g
+npm install electron -g
 npm install shadow-cljs -g
 npm install
 
@@ -14,5 +14,5 @@ electorn .
 ## Release
 ```
 npm run build
-electron-packager . HelloWorld --platform=darwin --arch=x64 --version=1.4.13
+npm run dist
 ```
