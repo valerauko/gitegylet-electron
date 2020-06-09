@@ -1,8 +1,7 @@
 (ns app.renderer.core
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
-            [clojure.string :as str]  
-            ["nedb" :as nedb]
+            [clojure.string :as str]
             [devtools.core :as devtools] 
             [app.renderer.views :refer [ui]]
             [app.renderer.subs]
@@ -17,8 +16,8 @@
 
 (defn ^:export init
   []
-  (rf/dispatch-sync [:initialize])  
-  (reagent/render [app.renderer.views/ui]           
+  (rf/dispatch-sync [:initialize])
+  (reagent/render [app.renderer.views/ui]
                   (js/document.getElementById "app-container")))
 
 (init)

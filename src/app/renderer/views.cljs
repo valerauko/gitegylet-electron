@@ -3,6 +3,7 @@
             [re-frame.core :as rf :refer [subscribe dispatch]]
             [clojure.string :as str]))
 
+(def hello (js/require "@amilajack/neon-hello"))
 
 ;; -- Domino 5 - View Functions ----------------------------------------------
 
@@ -25,9 +26,8 @@
 
 (defn ui
   []
-  [:div 
-   "阿斗:"]
   [:div
    [:h1 "Hello world, it is now"]
+   [:p (.helloWorld hello)]
    [clock]
    [color-input]])
