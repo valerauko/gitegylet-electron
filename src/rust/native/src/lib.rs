@@ -1,7 +1,7 @@
 use neon::prelude::*;
 use neon::register_module;
 
-fn hello_world(mut cx: FunctionContext) -> JsResult<JsString> {
+fn last_commit(mut cx: FunctionContext) -> JsResult<JsString> {
     let path = "/home/valerauko/Code/Kitsune/kitsune".to_string();
     let message = match git2::Repository::open(&path) {
         Ok(repo) => match repo.head() {
@@ -19,4 +19,4 @@ fn hello_world(mut cx: FunctionContext) -> JsResult<JsString> {
     Ok(cx.string(format!("The last commit {}.", message)))
 }
 
-register_module!(mut m, { m.export_function("lastCommit", hello_world) });
+register_module!(mut m, { m.export_function("lastCommit", last_commit) });
