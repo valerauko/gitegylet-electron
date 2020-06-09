@@ -1,0 +1,16 @@
+[package]
+name = "hello-git"
+version = "0.1.0"
+build = "build.rs"
+edition = "2018"
+
+[lib]
+name = "hello_world"
+crate-type = ["cdylib"]
+
+[build-dependencies]
+neon-build = "0.3.3"
+
+[dependencies]
+neon = "0.3.3"
+git2 = "0.13"

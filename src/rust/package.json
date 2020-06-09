@@ -1,0 +1,16 @@
+{
+  "name": "gitegylet-rs",
+  "version": "0.1.0",
+  "description": "Gitegylet Rust backend",
+  "main": "lib/index.js",
+  "author": "Balint Erdos <valerauko@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "neon-cli": "^0.3.3"
+  },
+  "scripts": {
+    "build": "neon build --release",
+    "install": "npm run build",
+    "test": "npm run build"
+  }
+}
