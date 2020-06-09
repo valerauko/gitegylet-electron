@@ -1,4 +1,4 @@
-(ns app.renderer.events
+(ns gitegylet.events
   (:require
     [re-frame.core  :as rf :refer [reg-event-db reg-event-fx inject-cofx path after]]
     [cljs.spec.alpha :as s]))

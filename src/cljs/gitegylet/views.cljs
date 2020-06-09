@@ -1,9 +1,9 @@
-(ns app.renderer.views
+(ns gitegylet.views
   (:require [reagent.core  :as reagent]
             [re-frame.core :as rf :refer [subscribe dispatch]]
             [clojure.string :as str]))
 
-(def hello (js/require "@amilajack/neon-hello"))
+(def hello (js/require "git"))
 
 ;; -- Domino 5 - View Functions ----------------------------------------------
 
@@ -28,6 +28,6 @@
   []
   [:div
    [:h1 "Hello world, it is now"]
-   [:p (.helloWorld hello)]
+   [:p (.lastCommit hello)]
    [clock]
    [color-input]])

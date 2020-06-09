@@ -1,4 +1,4 @@
-(ns app.renderer.subs
+(ns gitegylet.subs
   (:require [re-frame.core :as rf :refer [reg-sub subscribe]]))
 
 
@@ -13,4 +13,3 @@
   :time-color
   (fn [db _]
     (:time-color db)))
-

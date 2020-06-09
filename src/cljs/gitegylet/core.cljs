@@ -1,8 +1,8 @@
-(ns app.renderer.core
+(ns gitegylet.core
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]
             [clojure.string :as str]
-            [devtools.core :as devtools] 
+            [devtools.core :as devtools]
             [app.renderer.views :refer [ui]]
             [app.renderer.subs]
             [app.renderer.events]

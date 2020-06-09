@@ -4,32 +4,29 @@
   "description": "",
   "main": "resources/main.js",
   "scripts": {
-    "dev": "./node_modules/.bin/shadow-cljs watch main renderer",
-    "build": "./node_modules/.bin/shadow-cljs compile main renderer",
-    "rust": "electron-build-env neon build @amilajack/neon-hello --release",
-    "release": "./node_modules/.bin/shadow-cljs release main renderer",
+    "dev": "shadow-cljs watch main renderer",
+    "build": "shadow-cljs compile main renderer",
+    "rust": "electron-build-env neon build git --release",
+    "release": "shadow-cljs release main renderer",
     "clean": "rm -rf resources/public/js/* && rm -rf target && rm -f resources/main.js",
-    "hard-reset": "yarn clean && rm -rf node_modules",
+    "hard-reset": "yarn clean && rm -rf node_modules && rm -f yarn.lock",
     "from-zero": "yarn hard-reset && yarn && yarn rust && yarn dev",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
   "keywords": [],
-  "author": "chimez <chimez@163.com>",
-  "license": "ISC",
+  "author": "Balint Erdos <valerauko@gmail.com>",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron": "^2.0.3",
+    "electron": "^9.0.3",
     "electron-build-env": "^0.2.0",
-    "electron-builder": "^20.17.2",
-    "source-map-support": "^0.4.18",
-    "ws": "^3.2.0"
+    "electron-builder": "^22.7.0",
+    "shadow-cljs": "^2.8.110"
   },
   "dependencies": {
-    "@amilajack/neon-hello": "^1.0.2",
     "create-react-class": "^15.6.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-flip-move": "^3.0.4",
-    "shadow-cljs": "^2.2.16"
+    "react-flip-move": "^3.0.4"
   }
 }

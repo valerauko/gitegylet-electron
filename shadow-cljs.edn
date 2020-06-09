@@ -1,5 +1,5 @@
 ;; shadow-cljs configuration
-{:source-paths ["src"]
+{:source-paths ["src/cljs"]
 
  :dependencies [[reagent "0.8.1"]
                 [re-frame "0.10.5"]
@@ -13,19 +13,18 @@
  :nrepl {:port 8777}
  :builds {:main {:target :node-script
                  :output-to "resources/main.js"
-                 :main app.main.core/main}
+                 :main electron.core/main}
 
           :renderer {:target :browser
                      :output-dir "resources/public/js"
                      :asset-path "js"
 
-                     :modules {:renderer {:entries [app.renderer.core]}}
+                     :modules {:renderer {:entries [gitegylet.core]}}
 
                      :compiler-options {:closure-warnings {:global-this :off}
                                         :closure-defines {re-frame.trace.trace-enabled? true}}
 
-                     :devtools {:before-load app.renderer.core/stop
-                                :after-load app.renderer.core/start
+                     :devtools {:before-load gitegylet.core/stop
+                                :after-load gitegylet.core/start
                                 :preloads [devtools.preload
                                            day8.re-frame.trace.preload]}}}}
-
