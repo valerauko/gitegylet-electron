@@ -10,12 +10,10 @@
             [gitegylet.db]
             ))
 
-(devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
-(enable-console-print!)
-
 (defn dev-setup []
   (when config/debug?
-    (println "dev mode")))
+    (devtools/install!)
+    (enable-console-print!)))
 
 ;; -- Entry Point -------------------------------------------------------------
 
