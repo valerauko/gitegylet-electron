@@ -3,6 +3,7 @@
             [reagent.dom :as dom]
             [re-frame.core :as rf]
             [devtools.core :as devtools]
+            [gitegylet.config :as config]
             [gitegylet.views :as views]
             [gitegylet.subs]
             [gitegylet.events]
@@ -11,6 +12,10 @@
 
 (devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
 (enable-console-print!)
+
+(defn dev-setup []
+  (when config/debug?
+    (println "dev mode")))
 
 ;; -- Entry Point -------------------------------------------------------------
 
