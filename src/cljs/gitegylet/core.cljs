@@ -18,6 +18,6 @@
   []
   (rf/dispatch-sync [:initialize])
   (reagent/render [gitegylet.views/ui]
-                  (js/document.getElementById "app-container")))
+                  (js/document.getElementById "app")))
 
 (init)
