@@ -1,23 +1,30 @@
 (ns gitegylet.core
   (:require [reagent.core :as reagent]
+            [reagent.dom :as dom]
             [re-frame.core :as rf]
-            [clojure.string :as str]
             [devtools.core :as devtools]
-            [gitegylet.views :refer [ui]]
+            [gitegylet.config :as config]
+            [gitegylet.views :as views]
+            ;; required so closure doesn't kill them as dead code
             [gitegylet.subs]
             [gitegylet.events]
-            [gitegylet.db]
-            ))
+            [gitegylet.db]))
 
-(devtools/install!)       ;; we love https://github.com/binaryage/cljs-devtools
-(enable-console-print!)
+(defn dev-setup []
+  (when config/debug?
+    (devtools/install!)
+    (enable-console-print!)))
 
-;; -- Entry Point -------------------------------------------------------------
+(defn ^:dev/after-load mount-root []
+  (rf/clear-subscription-cache!)
+  (let [root-el (.getElementById js/document "app")]
+    (dom/unmount-component-at-node root-el)
+    (dom/render [views/ui] root-el)))
 
 (defn ^:export init
   []
   (rf/dispatch-sync [:initialize])
-  (reagent/render [gitegylet.views/ui]
-                  (js/document.getElementById "app-container")))
+  (dev-setup)
+  (mount-root))
 
 (init)

@@ -20,6 +20,7 @@
 
                      :compiler-options
                      {:closure-warnings {:global-this :off}
+                      ;; use ctrl+h to show-hide the trace panel
                       :closure-defines {re-frame.trace.trace-enabled? true}}
 
                      :devtools {:before-load gitegylet.core/stop
