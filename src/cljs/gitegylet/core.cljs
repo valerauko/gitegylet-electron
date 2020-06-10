@@ -1,9 +1,9 @@
 (ns gitegylet.core
   (:require [reagent.core :as reagent]
+            [reagent.dom :as dom]
             [re-frame.core :as rf]
-            [clojure.string :as str]
             [devtools.core :as devtools]
-            [gitegylet.views :refer [ui]]
+            [gitegylet.views :as views]
             [gitegylet.subs]
             [gitegylet.events]
             [gitegylet.db]
@@ -17,7 +17,7 @@
 (defn ^:export init
   []
   (rf/dispatch-sync [:initialize])
-  (reagent/render [gitegylet.views/ui]
+  (reagent/render [views/ui]
                   (js/document.getElementById "app")))
 
 (init)
