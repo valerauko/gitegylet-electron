@@ -16,7 +16,7 @@
                      :output-dir "resources/public/js"
                      :asset-path "js"
 
-                     :modules {:renderer {:entries [gitegylet.core]}}
+                     :modules {:renderer {:init-fn gitegylet.core/init}}
 
                      :compiler-options
                      {:closure-warnings {:global-this :off}

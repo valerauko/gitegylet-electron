@@ -26,5 +26,3 @@
   (rf/dispatch-sync [:initialize])
   (dev-setup)
   (mount-root))
-
-(init)
