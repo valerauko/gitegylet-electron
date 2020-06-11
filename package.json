@@ -28,6 +28,7 @@
     "git": "file:./src/rust",
     "highlight.js": "9.18.1",
     "react": "^16.13.1",
+    "react-checkbox-tree": "^1.6.0",
     "react-dom": "^16.13.1",
     "react-flip-move": "^3.0.4",
     "react-highlight.js": "1.0.7"
