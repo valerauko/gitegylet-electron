@@ -2,6 +2,7 @@ use neon::prelude::*;
 use neon::register_module;
 
 use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
 
 #[derive(Clone)]
 struct Commit {
@@ -51,6 +52,69 @@ impl PartialEq for Commit {
 }
 
 impl Eq for Commit {}
+
+fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
+    let arr_handle: Handle<JsArray> = cx.argument(0)?;
+    let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
+    let branches: Vec<String> = js_array
+        .iter()
+        .map(|js_value| {
+            js_value
+                .downcast::<JsString>()
+                .unwrap()
+                .value()
+        })
+        .collect();
+
+    let path = "/home/valerauko/Code/Kitsune/kitsune".to_string();
+    let repo = git2::Repository::open(&path).unwrap();
+
+    let mut ids = HashSet::new();
+    let mut heap = BinaryHeap::new();
+
+    branches
+        .iter()
+        .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
+            Ok(branch) => match branch.get().peel_to_commit() {
+                Ok(commit) => {
+                    ids.insert(commit.id());
+                    heap.push(Commit::from_git2(commit));
+                },
+                Err(e) => println!("{}", e)
+            },
+            Err(e) => println!("{}", e)
+        });
+
+    if heap.is_empty() {
+        return Ok(cx.empty_array());
+    }
+
+    let mut commits: Vec<Commit> = vec![];
+    while commits.len() < 100 {
+        match heap.pop() {
+            Some(commit) => {
+                repo.find_commit(commit.id)
+                    .unwrap()
+                    .parents()
+                    .for_each(|parent| {
+                        if !ids.contains(&parent.id()) {
+                            ids.insert(parent.id());
+                            heap.push(Commit::from_git2(parent));
+                        }
+                    });
+                commits.push(commit);
+            }
+            None => break,
+        }
+    }
+
+    let js_commits = JsArray::new(&mut cx, commits.len() as u32);
+    for (i, commit) in commits.iter().enumerate() {
+        let message = cx.string(&commit.summary);
+        js_commits.set(&mut cx, i as u32, message).unwrap();
+    }
+    Ok(js_commits)
+}
 
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
     let path = "/home/valerauko/Code/Kitsune/kitsune".to_string();
