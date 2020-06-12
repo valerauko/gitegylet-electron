@@ -5,10 +5,9 @@
             [devtools.core :as devtools]
             [gitegylet.config :as config]
             [gitegylet.views :as views]
-            ;; required so closure doesn't kill them as dead code
-            [gitegylet.subs]
-            [gitegylet.events]
-            [gitegylet.db]))
+            [gitegylet.events :as events]))
+
+(set! *warn-on-infer* true)
 
 (defn dev-setup []
   (when config/debug?
@@ -23,6 +22,7 @@
 
 (defn ^:export init
   []
-  (rf/dispatch-sync [:initialize])
+  (rf/dispatch-sync [::events/initialize-db])
+  (rf/dispatch [::events/reload-branches])
   (dev-setup)
   (mount-root))
