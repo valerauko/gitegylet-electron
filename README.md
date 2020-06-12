@@ -1,5 +1,7 @@
 # Gitegylet
 
+Desktop git GUI.
+
 ## References
 * the idea of ["Rust in Electron"](https://keminglabs.com/blog/building-a-fast-electron-app-with-rust/)
 * [Neon-backed Electron example](https://github.com/neon-bindings/examples/tree/cd9d454e1bc01dce0fb7b080a4c88c89e3d26e16)
