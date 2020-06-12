@@ -1,15 +1,26 @@
 (ns gitegylet.subs
-  (:require [re-frame.core :as rf :refer [reg-sub subscribe]]))
-
-
-;; -- Domino 4 - Query  -------------------------------------------------------
-
-(rf/reg-sub
-  :time
-  (fn [db _]     ;; db is current app state. 2nd unused param is query vector
-    (:time db))) ;; return a query computation over the application state
+  (:require
+   [re-frame.core :as rf]
+   [gitegylet.git :refer [git]]))
 
 (rf/reg-sub
-  :time-color
+  ::branches-checked
   (fn [db _]
-    (:time-color db)))
+    (:branches-checked db)))
+
+(rf/reg-sub
+  ::branches-expanded
+  (fn [db _]
+    (:branches-expanded db)))
+
+(rf/reg-sub
+  ::branches
+  (fn [db _]
+    (:branches db)))
+
+(rf/reg-sub
+  ::commits
+  :<- [::branches-checked]
+  (fn [branches _]
+    (when-not (empty? branches)
+      (.commits git branches))))
