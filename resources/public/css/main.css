@@ -1,4 +1,27 @@
-.logos img {
-  width: 100px;
-  margin-left: 5px;
+body {
+  background: #1a1d21;
+  color: #ccc;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+#flex {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.branches {
+  width: 260px;
+}
+
+.commits ol, .commits li {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+}
+
+.commits li {
+  height: 2em;
+  box-sizing: border-box;
+  padding-top: 0.5em;
 }

@@ -7,6 +7,7 @@
     "dev": "shadow-cljs watch main renderer",
     "build": "shadow-cljs compile main renderer",
     "rust": "electron-build-env neon build git --release",
+    "repl": "shadow-cljs node-repl",
     "release": "shadow-cljs release main renderer",
     "clean": "rm -rf resources/public/js/* && rm -rf target && rm -f resources/main.js",
     "hard-reset": "yarn clean && rm -rf node_modules && rm -f yarn.lock",
@@ -28,6 +29,7 @@
     "git": "file:./src/rust",
     "highlight.js": "9.18.1",
     "react": "^16.13.1",
+    "react-checkbox-tree": "^1.6.0",
     "react-dom": "^16.13.1",
     "react-flip-move": "^3.0.4",
     "react-highlight.js": "1.0.7"
