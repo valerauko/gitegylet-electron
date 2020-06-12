@@ -1,3 +1,10 @@
+body {
+  background: #1a1d21;
+  color: #ccc;
+  font-family: sans-serif;
+  user-select: none;
+}
+
 .branches {
   width: 260px;
 }
