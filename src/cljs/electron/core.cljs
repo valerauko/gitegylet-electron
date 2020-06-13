@@ -11,6 +11,8 @@
                                   :minWidth 800
                                   :height 600
                                   :minHeight 600
+                                  :icon (str js/__dirname "/public/img/gitt.png")
+                                  :backgroundColor "#1a1d21"
                                   :webPreferences
                                   {:preload (str js/__dirname "/preload.js")
                                    :nodeIntegration true}})))
