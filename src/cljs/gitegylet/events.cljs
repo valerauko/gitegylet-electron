@@ -30,4 +30,8 @@
 (rf/reg-event-db
  ::open-repo
  (fn [db [_ folder]]
-   (assoc db :repo folder)))
+   ; if the dialog was cancelled folder is going to be empty
+   (if folder
+     ; override whole db when a new repo is opened
+     {:repo folder}
+     db)))
