@@ -2,10 +2,11 @@
   (:require ["electron" :refer [dialog]]))
 
 (defn ipc-respond
-  [event payload]
+  [event type payload]
   (-> event
       (.-sender)
-      (.send "ipc-response" (clj->js payload))))
+      (.send "ipc-response" (clj->js {:type type
+                                      :payload payload}))))
 
 (defn folder-dialog
   [event _]
@@ -16,7 +17,7 @@
       (fn extract-chosen-folder [result]
         (let [folder (first (.-filePaths result))]
           ; (js/console.log "folder to open" folder)
-          (ipc-respond event folder))))))
+          (ipc-respond event :open-repo folder))))))
 
 (defn ipc-handler
   [event payload]
