@@ -25,7 +25,7 @@
                  layer (reduce
                          nested-branch-reducer
                          {:label label
-                           :value (join "/" new-parents)}
+                          :value (join "/" new-parents)}
                          folder)]
              (if (empty? (:children layer))
                layer
@@ -34,29 +34,39 @@
                  :children
                  #(group-branches % new-parents)))))))))
 
-(defn ui
+(defn branches
   []
-  (let [nodes (->> @(rf/subscribe [::subs/branches])
+  (let [nodes (->> @(rf/subscribe [::subs/branch-names])
                    (map #(split % #"/"))
                    (group-branches))
-        commits @(rf/subscribe [::subs/commits])
         checked @(rf/subscribe [::subs/branches-selected])
         expanded @(rf/subscribe [::subs/folders-expanded])
         on-check #(rf/dispatch [::events/branch-select %])
         on-expand #(rf/dispatch [::events/folder-expand %])]
-    [:div {:id "flex"}
-     [:div {:class "branches"}
-      [:button
-       {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
-       "Open repo"]
-      [:> CheckboxTree
-       {:nodes nodes
-        :checked checked
-        :expanded expanded
-        :only-leaf-checkboxes true
-        :on-check on-check
-        :on-expand on-expand}]]
-     [:div {:class "commits"}
-      (->> commits
-           (map (fn [msg] [:li msg]))
-           (into [:ol]))]]))
+    [:div {:class "branches"}
+     [:> CheckboxTree
+      {:nodes nodes
+       :checked checked
+       :expanded expanded
+       :only-leaf-checkboxes true
+       :on-check on-check
+       :on-expand on-expand}]]))
+
+(defn commits
+  []
+  (let [commits @(rf/subscribe [::subs/commits])]
+    [:div {:class "commits"}
+     (->> commits
+          (map (fn [msg]
+                 [:li [:span msg]]))
+          (into [:ol]))]))
+
+(defn ui
+  []
+  [:div
+   [:button
+    {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
+    "Open repo"]
+   [:div {:id "flex"}
+    (branches)
+    (commits)]])
