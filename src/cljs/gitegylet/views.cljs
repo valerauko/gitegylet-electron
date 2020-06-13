@@ -58,7 +58,6 @@
   (let [commits @(rf/subscribe [::subs/commits])
         branches (->> @(rf/subscribe [::subs/branches-selected])
                       (group-by #(.-commitId %)))]
-    (js/console.log (clj->js branches))
     [:div {:class "commits"}
      (->> commits
           (map (fn commit-to-element

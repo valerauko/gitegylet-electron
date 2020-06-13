@@ -39,7 +39,6 @@
     (let [selected-filter (if (empty? selected)
                             (constantly true)
                             (into #{} selected))]
-      (js/console.log branches)
       (filter #(some-> % (.-name) (selected-filter)) branches))))
 
 (rf/reg-sub
