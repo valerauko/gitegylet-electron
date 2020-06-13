@@ -54,7 +54,10 @@ impl PartialEq for Commit {
 impl Eq for Commit {}
 
 fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
-    let arr_handle: Handle<JsArray> = cx.argument(0)?;
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+
+    let arr_handle: Handle<JsArray> = cx.argument(1)?;
     let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
     let branches: Vec<String> = js_array
         .iter()
@@ -66,8 +69,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
         })
         .collect();
 
-    let path = "/home/valerauko/Code/Kitsune/kitsune".to_string();
-    let repo = git2::Repository::open(&path).unwrap();
+    let repo = git2::Repository::open(&repo_path).unwrap();
 
     let mut ids = HashSet::new();
     let mut heap = BinaryHeap::new();
@@ -117,8 +119,10 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
 }
 
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
-    let path = "/home/valerauko/Code/Kitsune/kitsune".to_string();
-    let branches = match git2::Repository::open(&path) {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+
+    let branches = match git2::Repository::open(&repo_path) {
         Ok(repo) => match repo.branches(Some(git2::BranchType::Local)) {
             Ok(branches) => branches.fold(vec![], |mut aggr, branch| match branch {
                 Ok((branch, _type)) => match branch.name() {
