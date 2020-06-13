@@ -14,7 +14,6 @@ struct Commit {
     summary: String,
     message: String,
     author: git2::Signature<'static>,
-    selected: bool,
 }
 
 impl Commit {
@@ -31,7 +30,6 @@ impl Commit {
                 None => commit.id().to_string(),
             },
             author: commit.author().to_owned(),
-            selected: false,
         }
     }
 }
