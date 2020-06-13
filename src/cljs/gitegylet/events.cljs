@@ -25,3 +25,17 @@
   ::reload-branches
   (fn [db _]
     (assoc db :branches (.localBranches git))))
+
+(rf/reg-event-db
+ ::send-ipc-message
+ (fn [db [_ message]]
+   (let [object {:type :ipc-request
+                 :payload message}]
+     (js/window.postMessage (clj->js object)))
+   db))
+
+(rf/reg-event-db
+ ::receive-ipc-message
+ (fn [db [_ message]]
+   (js/console.log "received message: " message)
+   db))

@@ -9,6 +9,14 @@
 
 (set! *warn-on-infer* true)
 
+; receive ipc message from main
+; sent from electron/events.cljs
+; forwarded by resources/preload.js
+(.addEventListener js/window "message"
+  (fn ipc-handler [event]
+    (if (= (-> event .-data .-type) "ipc-response")
+      (rf/dispatch [::events/receive-ipc-message (-> event .-data .-payload)]))))
+
 (defn dev-setup []
   (when config/debug?
     (devtools/install!)
