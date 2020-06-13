@@ -26,9 +26,15 @@
     (.localBranches git repo-path)))
 
 (rf/reg-sub
+  ::branch-names
+  :<- [::branches]
+  (fn [branches _]
+    (map #(.-name %) branches)))
+
+(rf/reg-sub
   ; use the branches-selected key in the db if present else select every branch
   ::branches-selected
-  :<- [::branches]
+  :<- [::branch-names]
   :<- [::-branches-selected]
   (fn [[branches selected] _]
     (or selected branches)))
@@ -36,7 +42,7 @@
 (rf/reg-sub
   ; use the folders-expanded key in the db if present else expand every folder
   ::folders-expanded
-  :<- [::branches]
+  :<- [::branch-names]
   :<- [::-folders-expanded]
   (fn [[branches expanded] _]
     (if expanded
@@ -53,6 +59,6 @@
   ::commits
   :<- [::repo]
   :<- [::branches-selected]
-  (fn [[repo-path branches] _]
-    (when-not (empty? branches)
-      (.commits git repo-path branches))))
+  (fn [[repo-path branch-names] _]
+    (when-not (empty? branch-names)
+      (.commits git repo-path (clj->js branch-names)))))
