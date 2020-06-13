@@ -3,6 +3,7 @@ body {
   color: #ccc;
   font-family: sans-serif;
   user-select: none;
+  margin: 0;
 }
 
 #flex {
@@ -11,7 +12,14 @@ body {
 }
 
 .branches {
+  flex: 0 0 auto;
   width: 260px;
+}
+
+.commits {
+  min-width: 525px;
+  /* 260 of .branches + 15 for the scrollbar */
+  max-width: calc(100% - 285px);
 }
 
 .commits ol, .commits li {
@@ -21,7 +29,26 @@ body {
 }
 
 .commits li {
-  height: 2em;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
   box-sizing: border-box;
-  padding-top: 0.5em;
+  height: 2em;
+}
+
+.commits li::before {
+  content: "some label";
+  flex: 0 0 max-content;
+  white-space: nowrap;
+  display: block;
+  background: brown;
+}
+
+.commits li span {
+  padding: 0 0.5em;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
