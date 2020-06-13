@@ -5,15 +5,18 @@
 
 ;; TODO: add schema specs
 
-(defn ->local-storage
+(def local-storage-key
+  "gitegylet-renderer")
+
+(defn persist
   "Persists DB to localStorage"
   [db]
-  (.setItem js/localStorage "gitegylet" (str db)))
+  (.setItem js/localStorage local-storage-key (str db)))
 
 (rf/reg-cofx
- ::local-storage
- (fn [state _]
-   (assoc state :local-storage
-     (some->> "gitegylet"
-              (.getItem js/localStorage)
-              (read-string)))))
+  ::persistence
+  (fn [state _]
+    (assoc state :persisted
+      (some->> local-storage-key
+               (.getItem js/localStorage)
+               (read-string)))))
