@@ -1,6 +1,9 @@
 use neon::prelude::*;
 use neon::register_module;
 
+#[macro_use]
+extern crate serde_derive;
+
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashSet};
 
@@ -118,6 +121,13 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     Ok(js_commits)
 }
 
+#[derive(Clone, Serialize)]
+struct Branch {
+    commit_id: String,
+    name: String,
+    is_head: bool,
+}
+
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
@@ -127,22 +137,31 @@ fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
             Ok(branches) => branches.fold(vec![], |mut aggr, branch| match branch {
                 Ok((branch, _type)) => match branch.name() {
                     Ok(Some(name)) => {
-                        aggr.push(name.to_string());
-                        aggr
+                        match branch.get().peel_to_commit() {
+                            Ok(commit) => {
+                                aggr.push(Branch {
+                                    commit_id: commit.id().to_string(),
+                                    is_head: branch.is_head(),
+                                    name: name.to_string(),
+                                });
+                                aggr
+                            },
+                            Err(_) => aggr,
+                        }
                     },
                     _ => aggr,
                 },
                 Err(_) => aggr,
             }),
-            Err(_) => vec!["No branches".to_string()],
+            Err(_) => vec![],
         },
-        Err(_) => vec!["Couldn't open repo".to_string()],
+        Err(_) => vec![],
     };
 
     let js_array = JsArray::new(&mut cx, branches.len() as u32);
-    for (i, obj) in branches.iter().enumerate() {
-        let name = cx.string(obj);
-        js_array.set(&mut cx, i as u32, name).unwrap();
+    for (i, branch) in branches.iter().enumerate() {
+        let js_branch = neon_serde::to_value(&mut cx, &branch)?;
+        js_array.set(&mut cx, i as u32, js_branch)?;
     }
 
     Ok(js_array)
