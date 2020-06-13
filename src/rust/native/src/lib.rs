@@ -124,8 +124,8 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
 
     let js_commits = JsArray::new(&mut cx, commits.len() as u32);
     for (i, commit) in commits.iter().enumerate() {
-        let message = cx.string(&commit.summary);
-        js_commits.set(&mut cx, i as u32, message).unwrap();
+        let js_commit = neon_serde::to_value(&mut cx, &commit)?;
+        js_commits.set(&mut cx, i as u32, js_commit).unwrap();
     }
     Ok(js_commits)
 }
