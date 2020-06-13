@@ -37,15 +37,21 @@ body {
   height: 2em;
 }
 
-.commits li::before {
-  content: "some label";
+
+.commits li .branch-label {
   flex: 0 0 max-content;
   white-space: nowrap;
   display: block;
-  background: brown;
+  padding: 0.2em 0.3em;
+  border: 1px solid #483f1c;
 }
 
-.commits li span {
+.commits li .branch-label.head {
+  background: #ffc806;
+  color: #27271f;
+}
+
+.commits li .message {
   padding: 0 0.5em;
   display: block;
   overflow: hidden;
