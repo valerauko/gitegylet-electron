@@ -7,7 +7,7 @@
 (rf/reg-event-fx
   ::initialize-db
   (fn [_ _]
-    {:db {:branches []
+    {:db {:repo "."
           :branches-checked []
           :branches-expanded []}}))
 
