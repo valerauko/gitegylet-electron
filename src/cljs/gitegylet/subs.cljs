@@ -14,13 +14,20 @@
     (:branches-expanded db)))
 
 (rf/reg-sub
-  ::branches
+  ::repo
   (fn [db _]
-    (:branches db)))
+    (:repo db)))
+
+(rf/reg-sub
+  ::branches
+  :<- [::repo]
+  (fn [repo-path _]
+    (.localBranches git repo-path)))
 
 (rf/reg-sub
   ::commits
+  :<- [::repo]
   :<- [::branches-checked]
-  (fn [branches _]
+  (fn [[repo-path branches] _]
     (when-not (empty? branches)
-      (.commits git branches))))
+      (.commits git repo-path branches))))
