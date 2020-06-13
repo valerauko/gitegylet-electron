@@ -39,7 +39,7 @@
   (let [nodes (->> @(rf/subscribe [::subs/branch-names])
                    (map #(split % #"/"))
                    (group-branches))
-        checked @(rf/subscribe [::subs/branches-selected])
+        checked @(rf/subscribe [::subs/branch-names-selected])
         expanded @(rf/subscribe [::subs/folders-expanded])
         on-check #(rf/dispatch [::events/branch-select %])
         on-expand #(rf/dispatch [::events/folder-expand %])]
@@ -54,11 +54,28 @@
 
 (defn commits
   []
-  (let [commits @(rf/subscribe [::subs/commits])]
+  (let [commits @(rf/subscribe [::subs/commits])
+        branches (->> @(rf/subscribe [::subs/branches-selected])
+                      (group-by #(.-commitId %)))]
+    (js/console.log (clj->js branches))
     [:div {:class "commits"}
      (->> commits
-          (map (fn [msg]
-                 [:li [:span msg]]))
+          (map (fn commit-to-element
+                 [commit]
+                 (let [relevant-branches (get branches (.-id commit))]
+                   [:li
+                    (some->> relevant-branches
+                      (map (fn [branch]
+                             [:span
+                              {:class ["branch-label"
+                                       (when (.-isHead branch)
+                                         "head")]}
+                              (-> (.-name branch)
+                                  (split #"/")
+                                  (last))])))
+                    [:span
+                     {:class ["message"]}
+                     (.-summary commit)]])))
           (into [:ol]))]))
 
 (defn ui
