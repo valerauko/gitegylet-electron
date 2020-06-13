@@ -46,6 +46,9 @@
         on-expand #(rf/dispatch [::events/branch-expand %])]
     [:div {:id "flex"}
      [:div {:class "branches"}
+      [:button
+       {:label "Open repo"
+        :on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}]
       [:> CheckboxTree
        {:nodes nodes
         :checked checked

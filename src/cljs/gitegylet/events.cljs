@@ -7,7 +7,7 @@
 (rf/reg-event-fx
   ::initialize-db
   (fn [_ _]
-    {:db {:branches []
+    {:db {:repo "."
           :branches-checked []
           :branches-expanded []}}))
 
@@ -22,6 +22,14 @@
    (assoc db :branches-expanded item)))
 
 (rf/reg-event-db
-  ::reload-branches
-  (fn [db _]
-    (assoc db :branches (.localBranches git))))
+ ::send-ipc-message
+ (fn [db [_ message]]
+   (let [object {:type :ipc-request
+                 :payload message}]
+     (js/window.postMessage (clj->js object)))
+   db))
+
+(rf/reg-event-db
+ ::open-repo
+ (fn [db [_ folder]]
+   (assoc db :repo folder)))

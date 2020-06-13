@@ -9,6 +9,18 @@
 
 (set! *warn-on-infer* true)
 
+; receive ipc message from main
+; sent from electron/events.cljs
+; forwarded by resources/preload.js
+(.addEventListener js/window "message"
+  (fn ipc-handler [event]
+    (if (= (-> event .-data .-type) "ipc-response")
+      (let [message (-> event .-data .-payload)
+            handler (keyword 'gitegylet.events (.-type message))
+            ; converting js objects to cljs maps is a pain in the ass
+            payload (-> message .-payload ,,,)]
+        (rf/dispatch [handler payload])))))
+
 (defn dev-setup []
   (when config/debug?
     (devtools/install!)
@@ -23,6 +35,5 @@
 (defn ^:export init
   []
   (rf/dispatch-sync [::events/initialize-db])
-  (rf/dispatch [::events/reload-branches])
   (dev-setup)
   (mount-root))
