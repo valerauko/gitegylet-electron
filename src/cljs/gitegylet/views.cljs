@@ -40,15 +40,15 @@
                    (map #(split % #"/"))
                    (group-branches))
         commits @(rf/subscribe [::subs/commits])
-        checked @(rf/subscribe [::subs/branches-checked])
-        expanded @(rf/subscribe [::subs/branches-expanded])
-        on-check #(rf/dispatch [::events/branch-check %])
-        on-expand #(rf/dispatch [::events/branch-expand %])]
+        checked @(rf/subscribe [::subs/branches-selected])
+        expanded @(rf/subscribe [::subs/folders-expanded])
+        on-check #(rf/dispatch [::events/branch-select %])
+        on-expand #(rf/dispatch [::events/folder-expand %])]
     [:div {:id "flex"}
      [:div {:class "branches"}
       [:button
-       {:label "Open repo"
-        :on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}]
+       {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
+       "Open repo"]
       [:> CheckboxTree
        {:nodes nodes
         :checked checked
