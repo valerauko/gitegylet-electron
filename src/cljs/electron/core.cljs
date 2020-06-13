@@ -7,6 +7,10 @@
 (defn init-browser []
   (reset! main-window (BrowserWindow.
                         (clj->js {:fullscreenable false ;; the f11 fullscreen
+                                  :width 800
+                                  :minWidth 800
+                                  :height 600
+                                  :minHeight 600
                                   :webPreferences
                                   {:preload (str js/__dirname "/preload.js")
                                    :nodeIntegration true}})))
