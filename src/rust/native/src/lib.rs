@@ -1,8 +1,7 @@
 use neon::prelude::*;
 use neon::register_module;
 
-#[macro_use]
-extern crate serde_derive;
+use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashSet};
@@ -31,6 +30,18 @@ impl Commit {
             },
             author: commit.author().to_owned(),
         }
+    }
+}
+
+impl Serialize for Commit {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Commit", 3)?;
+        state.serialize_field("id", &self.id.to_string())?;
+        state.serialize_field("summary", &self.summary)?;
+        state.end()
     }
 }
 
@@ -119,11 +130,24 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     Ok(js_commits)
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone)]
 struct Branch {
     commit_id: String,
     name: String,
     is_head: bool,
+}
+
+impl Serialize for Branch {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Branch", 3)?;
+        state.serialize_field("commitId", &self.commit_id.to_string())?;
+        state.serialize_field("name", &self.name)?;
+        state.serialize_field("isHead", &self.is_head)?;
+        state.end()
+    }
 }
 
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
