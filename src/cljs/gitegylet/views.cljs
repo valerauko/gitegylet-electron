@@ -32,7 +32,8 @@
                (update
                  layer
                  :children
-                 #(group-branches % new-parents)))))))))
+                 #(group-branches % new-parents))))))
+        (sort-by :value))))
 
 (defn branches
   []
