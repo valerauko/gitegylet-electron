@@ -22,11 +22,6 @@
    (assoc db :branches-expanded item)))
 
 (rf/reg-event-db
-  ::reload-branches
-  (fn [db _]
-    (assoc db :branches (.localBranches git))))
-
-(rf/reg-event-db
  ::send-ipc-message
  (fn [db [_ message]]
    (let [object {:type :ipc-request
@@ -35,7 +30,6 @@
    db))
 
 (rf/reg-event-db
- ::receive-ipc-message
- (fn [db [_ message]]
-   (js/console.log "received message: " message)
-   db))
+ ::open-repo
+ (fn [db [_ folder]]
+   (assoc db :repo folder)))
