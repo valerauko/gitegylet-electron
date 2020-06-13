@@ -10,14 +10,14 @@
     {:db {:repo "."}}))
 
 (rf/reg-event-db
- ::branch-check
+ ::branch-select
  (fn [db [_ item]]
-   (assoc db :branches-checked item)))
+   (assoc db :branches-selected item)))
 
 (rf/reg-event-db
- ::branch-expand
+ ::folder-expand
  (fn [db [_ item]]
-   (assoc db :branches-expanded item)))
+   (assoc db :folders-expanded item)))
 
 (rf/reg-event-db
  ::send-ipc-message

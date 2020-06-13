@@ -6,12 +6,12 @@
 (rf/reg-sub
   ::branches-checked
   (fn [db _]
-    (:branches-checked db)))
+    (:branches-selected db)))
 
 (rf/reg-sub
   ::branches-expanded
   (fn [db _]
-    (:branches-expanded db)))
+    (:folders-expanded db)))
 
 (rf/reg-sub
   ::repo
@@ -27,7 +27,7 @@
 (rf/reg-sub
   ::commits
   :<- [::repo]
-  :<- [::branches-checked]
+  :<- [::branches-selected]
   (fn [[repo-path branches] _]
     (when-not (empty? branches)
       (.commits git repo-path branches))))
