@@ -32,8 +32,19 @@
     (map #(.-name %) branches)))
 
 (rf/reg-sub
-  ; use the branches-selected key in the db if present else select every branch
   ::branches-selected
+  :<- [::branches]
+  :<- [::-branches-selected]
+  (fn [[branches selected] _]
+    (let [selected-filter (if (empty? selected)
+                            (constantly true)
+                            (into #{} selected))]
+      (js/console.log branches)
+      (filter #(some-> % (.-name) (selected-filter)) branches))))
+
+(rf/reg-sub
+  ; use the branches-selected key in the db if present else select every branch
+  ::branch-names-selected
   :<- [::branch-names]
   :<- [::-branches-selected]
   (fn [[branches selected] _]
@@ -58,7 +69,7 @@
 (rf/reg-sub
   ::commits
   :<- [::repo]
-  :<- [::branches-selected]
+  :<- [::branch-names-selected]
   (fn [[repo-path branch-names] _]
     (when-not (empty? branch-names)
       (.commits git repo-path (clj->js branch-names)))))
