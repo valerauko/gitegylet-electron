@@ -16,7 +16,7 @@ body {
 }
 
 .branches {
-  flex: 0 0 auto;
+  min-width: 200px;
   width: 260px;
 }
 
