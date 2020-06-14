@@ -6,6 +6,10 @@
             [gitegylet.events :as events]
             [gitegylet.subs :as subs]))
 
+(defn inspect
+  [thing]
+  (js/console.log (str thing)))
+
 (defn nested-branch-reducer
   [aggr item]
   (let [children (rest item)]
@@ -52,10 +56,6 @@
        :only-leaf-checkboxes true
        :on-check on-check
        :on-expand on-expand}]]))
-
-(defn inspect
-  [thing]
-  (js/console.log (str thing)))
 
 (defn index-by-id
   [commits]
