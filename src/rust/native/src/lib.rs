@@ -4,7 +4,9 @@ use neon::register_module;
 use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::{BinaryHeap, HashSet, HashMap};
+
+use md5::{Md5, Digest};
 
 #[derive(Clone)]
 struct Commit {
@@ -45,6 +47,17 @@ impl Serialize for Commit {
         state.serialize_field("summary", &self.summary)?;
         state.serialize_field("message", &self.message)?;
         state.serialize_field("timestamp", &self.time.seconds())?;
+
+        let mut author = HashMap::new();
+        let email = self.author.email().unwrap();
+        author.insert("name", self.author.name().unwrap());
+        author.insert("email", &email);
+        let mut hasher = Md5::new();
+        hasher.update(email.to_lowercase().as_bytes());
+        let hash = format!("{:x}", hasher.finalize());
+        author.insert("md5", &hash);
+        state.serialize_field("author", &author)?;
+
         state.serialize_field(
             "parents",
             &self
