@@ -65,6 +65,11 @@
      (let [parents (js->clj (.-parents commit))
            commit-id (.-id commit)]
        (assoc aggr commit-id {:id commit-id
+                              :author
+                              (let [author (.-author commit)]
+                                {:name (.-name author)
+                                 :email (.-email author)
+                                 :md5 (.-md5 author)})
                               :time (.-timestamp commit)
                               :parents parents
                               :children #{}})))
@@ -184,6 +189,7 @@
            [used-columns column-map]))))))
 
 (def colors
+  ;; TODO: redesign colors. should come up with a palette based on ffc806
   (->> ["#d90171"
         "#cd0101"
         "#f25d2e"
@@ -210,14 +216,41 @@
                               (into {}))
            commits-map (->> commits
                             (index-by-id)
-                            (inject-children))]
+                            (inject-children))
+           icons (->> ordered-ids
+                      (reduce
+                       (fn author-md5-mapper [aggr id]
+                         (if (contains? aggr id)
+                           aggr
+                           (let [hash (get-in commits-map [id :author :md5])
+                                 icon-size 24]
+                             (assoc aggr id
+                                    [:pattern
+                                     {:key (gensym)
+                                      :id hash
+                                      :width icon-size
+                                      :height icon-size
+                                      :patternContentUnits "objectBoundingBox"}
+                                     [:image
+                                      {:width 1
+                                       :height 1
+                                       :fill "#1a1d21"
+                                       :href
+                                       ;; TODO: CSP
+                                       (str "https://www.gravatar.com/avatar/"
+                                            hash
+                                            "?s=" icon-size "&d=retro")}]]))))
+                       {})
+                      (vals)
+                      (into [:defs]))]
        (let [[_ column-map] (column-commit-map commits-map ordered-ids)
              column-count (->> column-map vals (apply max) inc)
              columns (range column-count)
              canvas-em-height (* 2 (count ordered-ids))
              svg-header [:svg {:style
                                {:width (str (* 2 column-count) "em")
-                                :height (str canvas-em-height "em")}}]]
+                                :height (str canvas-em-height "em")}}
+                         icons]]
          (->> ordered-ids
               (map-indexed
                (fn commit-drawer [idx id]
@@ -234,7 +267,13 @@
                                  :r (if merge? 6 12)
                                  :cx commit-x
                                  :cy commit-y
-                                 :fill commit-color}]]
+                                 :stroke-width 2.5
+                                 :stroke commit-color
+                                 :fill (if merge?
+                                         commit-color
+                                         (str " url(#"
+                                              (-> commit :author :md5)
+                                              ")"))}]]
                    (->> parent-ids
                         (map
                          (fn path-drawer [parent-id]
