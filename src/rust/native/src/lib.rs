@@ -42,6 +42,7 @@ impl Serialize for Commit {
         state.serialize_field("id", &self.id.to_string())?;
         state.serialize_field("summary", &self.summary)?;
         state.serialize_field("message", &self.message)?;
+        state.serialize_field("timestamp", &self.time.seconds())?;
         state.end()
     }
 }
