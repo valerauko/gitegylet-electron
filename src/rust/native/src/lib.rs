@@ -13,6 +13,7 @@ struct Commit {
     summary: String,
     message: String,
     author: git2::Signature<'static>,
+    parents: Vec<git2::Oid>,
 }
 
 impl Commit {
@@ -29,6 +30,7 @@ impl Commit {
                 None => commit.id().to_string(),
             },
             author: commit.author().to_owned(),
+            parents: commit.parent_ids().collect(),
         }
     }
 }
@@ -43,6 +45,14 @@ impl Serialize for Commit {
         state.serialize_field("summary", &self.summary)?;
         state.serialize_field("message", &self.message)?;
         state.serialize_field("timestamp", &self.time.seconds())?;
+        state.serialize_field(
+            "parents",
+            &self
+                .parents
+                .iter()
+                .map(|parent| parent.to_string())
+                .collect::<Vec<String>>()
+        )?;
         state.end()
     }
 }
