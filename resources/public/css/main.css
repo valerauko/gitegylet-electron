@@ -25,6 +25,11 @@ body {
   flex-flow: row nowrap;
 }
 
+.commits svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
 .commits ol {
   flex: 1 1 100%;
   min-width: 0;
