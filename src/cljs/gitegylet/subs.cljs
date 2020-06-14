@@ -71,4 +71,6 @@
   :<- [::branch-names-selected]
   (fn [[repo-path branch-names] _]
     (when-not (empty? branch-names)
-      (.commits git repo-path (clj->js branch-names)))))
+      (->> branch-names
+           (clj->js)
+           (.commits git repo-path)))))
