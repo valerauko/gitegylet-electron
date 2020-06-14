@@ -56,13 +56,13 @@
 (defn commits
   []
   (let [commits @(rf/subscribe [::subs/commits])
-        branches (->> @(rf/subscribe [::subs/branches-selected])
-                      (group-by #(.-commitId %)))]
+        branches @(rf/subscribe [::subs/branches-selected])
+        indexed-branches (group-by #(.-commitId %) branches)]
     [:div {:class "commits"}
      (->> commits
           (map (fn commit-to-element
                  [commit]
-                 (let [relevant-branches (get branches (.-id commit))]
+                 (let [relevant-branches (get indexed-branches (.-id commit))]
                    [:li
                     (some->> relevant-branches
                       (map (fn [branch]
