@@ -90,7 +90,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
         .iter()
         .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
             Ok(branch) => match branch.get().peel_to_commit() {
-                Ok(commit) => {
+                Ok(commit) => if !ids.contains(&commit.id()) {
                     ids.insert(commit.id());
                     heap.push(Commit::from_git2(commit));
                 },
