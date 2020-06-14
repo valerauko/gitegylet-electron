@@ -41,6 +41,7 @@ impl Serialize for Commit {
         let mut state = serializer.serialize_struct("Commit", 3)?;
         state.serialize_field("id", &self.id.to_string())?;
         state.serialize_field("summary", &self.summary)?;
+        state.serialize_field("message", &self.message)?;
         state.end()
     }
 }
