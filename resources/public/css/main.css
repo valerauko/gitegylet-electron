@@ -6,6 +6,10 @@ body {
   margin: 0;
 }
 
+* {
+  min-width: 0;
+}
+
 #flex {
   display: flex;
   flex-flow: row nowrap;
@@ -17,9 +21,13 @@ body {
 }
 
 .commits {
-  min-width: 525px;
-  /* 260 of .branches + 15 for the scrollbar */
-  max-width: calc(100% - 285px);
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.commits ol {
+  flex: 1 1 100%;
+  min-width: 0;
 }
 
 .commits ol, .commits li {
@@ -37,8 +45,8 @@ body {
   height: 2em;
 }
 
-
 .commits li .branch-label {
+  min-width: auto;
   flex: 0 0 max-content;
   white-space: nowrap;
   display: block;
