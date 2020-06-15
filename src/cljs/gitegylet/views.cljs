@@ -215,6 +215,7 @@
 (defn commits
   []
   (let [commits @(rf/subscribe [::subs/commits])
+        head @(rf/subscribe [::subs/head])
         branches @(rf/subscribe [::subs/branches-selected])
         indexed-branches (group-by #(.-commitId %) branches)]
     [:div {:class "commits"}
@@ -254,6 +255,7 @@
        (let [[_ column-map] (column-commit-map commits-map ordered-ids)
              column-count (->> column-map vals (apply max) inc)
              columns (range column-count)
+             head-col (get column-map (.-id head))
              canvas-em-height (* 2 (count ordered-ids))
              svg-header [:svg {:style
                                {:width (str (* 2 column-count) "em")
@@ -269,7 +271,7 @@
                        column (get column-map id)
                        commit-x (+ 16 (* 32 column))
                        commit-y (+ 16 (* 32 idx))
-                       commit-color (get colors column)
+                       commit-color (color column head-col)
                        circle
                        [:circle {:key (gensym)
                                  :r (if merge? 6 12)
@@ -289,7 +291,7 @@
                                  parent-column (get column-map parent-id)
                                  path-color (if (= first-parent-id parent-id)
                                               commit-color
-                                              (get colors parent-column))
+                                              (color parent-column head-col))
                                  parent-at (get reverse-index parent-id
                                                 canvas-em-height)
                                  parent-x (+ 16 (* 32 parent-column))
