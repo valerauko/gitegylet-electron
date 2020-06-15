@@ -48,6 +48,7 @@
         expanded @(rf/subscribe [::subs/folders-expanded])
         on-check #(rf/dispatch [::events/branch-select %])
         on-expand #(rf/dispatch [::events/folder-expand %])]
+    (inspect expanded)
     [:div {:class "branches"}
      [:> CheckboxTree
       {:nodes nodes
@@ -191,10 +192,8 @@
 (defn color
   ([i] (color i -1))
   ([i head]
-   (let [hue (rem (+ 47 (* (- i head) 45)) 360)]
-     (str "hsl(" hue ", "
-                 (if (= i head) 100 60) "%, "
-                 (if (= i head) 50 40) "%)"))))
+   (let [hue (rem (+ 50 (* (- i head) 45)) 360)]
+     (str "hsl(" hue ", 70%, 45%)"))))
 
 (defn append [item ls] (concat ls (list item)))
 
