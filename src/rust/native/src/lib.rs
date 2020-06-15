@@ -90,6 +90,16 @@ impl PartialEq for Commit {
 
 impl Eq for Commit {}
 
+fn head(mut cx: FunctionContext) -> JsResult<JsValue> {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
+
+    let head = repo.head().unwrap().peel_to_commit().unwrap();
+    let js_head = neon_serde::to_value(&mut cx, &Commit::from_git2(head))?;
+    Ok(js_head)
+}
+
 fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
@@ -217,5 +227,6 @@ fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
 register_module!(mut m, {
     m.export_function("localBranches", local_branches)?;
     m.export_function("commits", commits)?;
+    m.export_function("head", head)?;
     Ok(())
 });
