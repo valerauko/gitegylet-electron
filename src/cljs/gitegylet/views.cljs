@@ -202,6 +202,14 @@
        (map-indexed (fn [i v] [i v]))
        (into {})))
 
+(defn color
+  ([i] (color i -1))
+  ([i head]
+   (let [hue (rem (+ 47 (* (- i head) 45)) 360)]
+     (str "hsl(" hue ", "
+                 (if (= i head) 100 60) "%, "
+                 (if (= i head) 50 40) "%)"))))
+
 (defn append [item ls] (concat ls (list item)))
 
 (defn commits
