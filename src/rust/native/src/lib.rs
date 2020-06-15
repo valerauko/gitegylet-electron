@@ -139,7 +139,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     }
 
     let mut commits: Vec<Commit> = vec![];
-    while commits.len() < 100 {
+    while commits.len() < 250 {
         match heap.pop() {
             Some(commit) => {
                 repo.find_commit(commit.id)
