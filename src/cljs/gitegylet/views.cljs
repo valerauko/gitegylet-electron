@@ -244,7 +244,8 @@
              canvas-em-height (* 2 (count ordered-ids))
              svg-header [:svg {:style
                                {:width (str (* 2 column-count) "em")
-                                :height (str canvas-em-height "em")}}
+                                :height (str canvas-em-height "em")
+                                :transform "scale(-1,1)"}}
                          icons]]
          (->> ordered-ids
               (map-indexed
