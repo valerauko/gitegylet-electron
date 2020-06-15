@@ -74,3 +74,9 @@
       (->> branch-names
            (clj->js)
            (.commits git repo-path)))))
+
+(rf/reg-sub
+  ::head
+  :<- [::repo]
+  (fn [repo-path _]
+    (.head git repo-path)))
