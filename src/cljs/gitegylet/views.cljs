@@ -188,20 +188,6 @@
              remaining)
            [used-columns column-map]))))))
 
-(def colors
-  ;; TODO: redesign colors. should come up with a palette based on ffc806
-  (->> ["#d90171"
-        "#cd0101"
-        "#f25d2e"
-        "#f2ca33"
-        "#7bd938"
-        "#15a0bf"
-        "#0669f7"
-        "#8e00c2"
-        "#c517b6"]
-       (map-indexed (fn [i v] [i v]))
-       (into {})))
-
 (defn color
   ([i] (color i -1))
   ([i head]
