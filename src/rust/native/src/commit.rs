@@ -7,12 +7,12 @@ use md5::{Md5, Digest};
 
 #[derive(Clone)]
 pub struct Commit {
-    pub id: git2::Oid,
-    pub time: git2::Time,
-    pub summary: String,
-    pub message: String,
-    pub author: git2::Signature<'static>,
-    pub parents: Vec<git2::Oid>,
+    id: git2::Oid,
+    time: git2::Time,
+    summary: String,
+    message: String,
+    author: git2::Signature<'static>,
+    parents: Vec<git2::Oid>,
 }
 
 impl Commit {

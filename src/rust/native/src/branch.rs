@@ -2,9 +2,9 @@ use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 #[derive(Clone)]
 pub struct Branch {
-    pub commit_id: String,
-    pub name: String,
-    pub is_head: bool,
+    commit_id: String,
+    name: String,
+    is_head: bool,
 }
 
 impl Branch {
