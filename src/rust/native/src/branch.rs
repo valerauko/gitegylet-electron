@@ -7,6 +7,31 @@ pub struct Branch {
     pub is_head: bool,
 }
 
+impl Branch {
+    pub fn locals(repo: git2::Repository) -> Vec<Self> {
+        let branches = repo.branches(Some(git2::BranchType::Local)).unwrap();
+        branches.fold(vec![], |mut aggr, branch| match branch {
+            Ok((branch, _type)) => match branch.name() {
+                Ok(Some(name)) => {
+                    match branch.get().peel_to_commit() {
+                        Ok(commit) => {
+                            aggr.push(Self {
+                                commit_id: commit.id().to_string(),
+                                is_head: branch.is_head(),
+                                name: name.to_string(),
+                            });
+                            aggr
+                        },
+                        Err(_) => aggr,
+                    }
+                },
+                _ => aggr,
+            },
+            Err(_) => aggr,
+        })
+    }
+}
+
 impl Serialize for Branch {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

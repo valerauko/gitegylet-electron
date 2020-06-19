@@ -50,32 +50,9 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
 
-    let branches = match git2::Repository::open(&repo_path) {
-        Ok(repo) => match repo.branches(Some(git2::BranchType::Local)) {
-            Ok(branches) => branches.fold(vec![], |mut aggr, branch| match branch {
-                Ok((branch, _type)) => match branch.name() {
-                    Ok(Some(name)) => {
-                        match branch.get().peel_to_commit() {
-                            Ok(commit) => {
-                                aggr.push(Branch {
-                                    commit_id: commit.id().to_string(),
-                                    is_head: branch.is_head(),
-                                    name: name.to_string(),
-                                });
-                                aggr
-                            },
-                            Err(_) => aggr,
-                        }
-                    },
-                    _ => aggr,
-                },
-                Err(_) => aggr,
-            }),
-            Err(_) => vec![],
-        },
-        Err(_) => vec![],
-    };
+    let branches = Branch::locals(repo);
 
     let js_array = JsArray::new(&mut cx, branches.len() as u32);
     for (i, branch) in branches.iter().enumerate() {
