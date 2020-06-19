@@ -1,7 +1,7 @@
 use serde::ser::{Serialize, Serializer, SerializeStruct};
 
 use std::cmp::Ordering;
-use std::collections::{HashMap};
+use std::collections::{BinaryHeap, HashSet, HashMap};
 
 use md5::{Md5, Digest};
 
@@ -31,6 +31,49 @@ impl Commit {
             author: commit.author().to_owned(),
             parents: commit.parent_ids().collect(),
         }
+    }
+
+    pub fn on_branches(repo: git2::Repository, branch_names: Vec<String>) -> Vec<Self> {
+        let mut ids = HashSet::new();
+        let mut heap = BinaryHeap::new();
+
+        branch_names
+            .iter()
+            .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
+                Ok(branch) => match branch.get().peel_to_commit() {
+                    Ok(commit) => if !ids.contains(&commit.id()) {
+                        ids.insert(commit.id());
+                        heap.push(Self::from_git2(commit));
+                    },
+                    Err(e) => println!("{}", e)
+                },
+                Err(e) => println!("{}", e)
+            });
+        let mut commits: Vec<Commit> = vec![];
+
+        if heap.is_empty() {
+            return commits;
+        }
+
+        while commits.len() < 250 {
+            match heap.pop() {
+                Some(commit) => {
+                    repo.find_commit(commit.id)
+                        .unwrap()
+                        .parents()
+                        .for_each(|parent| {
+                            if !ids.contains(&parent.id()) {
+                                ids.insert(parent.id());
+                                heap.push(Commit::from_git2(parent));
+                            }
+                        });
+                    commits.push(commit);
+                }
+                None => break,
+            }
+        }
+
+        return commits
     }
 }
 

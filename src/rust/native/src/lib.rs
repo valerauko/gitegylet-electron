@@ -1,8 +1,6 @@
 use neon::prelude::*;
 use neon::register_module;
 
-use std::collections::{BinaryHeap, HashSet};
-
 mod branch;
 mod commit;
 
@@ -19,9 +17,6 @@ fn head(mut cx: FunctionContext) -> JsResult<JsValue> {
 }
 
 fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
-    let js_path: Handle<JsString> = cx.argument(0)?;
-    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
-
     let arr_handle: Handle<JsArray> = cx.argument(1)?;
     let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
     let branches: Vec<String> = js_array
@@ -34,45 +29,14 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
         })
         .collect();
 
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
     let repo = git2::Repository::open(&repo_path).unwrap();
 
-    let mut ids = HashSet::new();
-    let mut heap = BinaryHeap::new();
+    let commits = Commit::on_branches(repo, branches);
 
-    branches
-        .iter()
-        .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
-            Ok(branch) => match branch.get().peel_to_commit() {
-                Ok(commit) => if !ids.contains(&commit.id()) {
-                    ids.insert(commit.id());
-                    heap.push(Commit::from_git2(commit));
-                },
-                Err(e) => println!("{}", e)
-            },
-            Err(e) => println!("{}", e)
-        });
-
-    if heap.is_empty() {
+    if commits.is_empty() {
         return Ok(cx.empty_array());
-    }
-
-    let mut commits: Vec<Commit> = vec![];
-    while commits.len() < 250 {
-        match heap.pop() {
-            Some(commit) => {
-                repo.find_commit(commit.id)
-                    .unwrap()
-                    .parents()
-                    .for_each(|parent| {
-                        if !ids.contains(&parent.id()) {
-                            ids.insert(parent.id());
-                            heap.push(Commit::from_git2(parent));
-                        }
-                    });
-                commits.push(commit);
-            }
-            None => break,
-        }
     }
 
     let js_commits = JsArray::new(&mut cx, commits.len() as u32);
