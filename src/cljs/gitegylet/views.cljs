@@ -48,7 +48,6 @@
         expanded @(rf/subscribe [::subs/folders-expanded])
         on-check #(rf/dispatch [::events/branch-select %])
         on-expand #(rf/dispatch [::events/folder-expand %])]
-    (inspect expanded)
     [:div {:class "branches"}
      [:> CheckboxTree
       {:nodes nodes
