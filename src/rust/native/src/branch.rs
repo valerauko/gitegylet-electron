@@ -1,5 +1,5 @@
-use serde::ser::{Serialize, Serializer, SerializeStruct};
-use std::collections::{HashSet, HashMap};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+use std::collections::{HashMap, HashSet};
 
 #[derive(Clone)]
 pub struct Branch {
@@ -30,12 +30,12 @@ impl Branch {
                 Err(e) => {
                     println!("{}", e);
                     None
-                },
+                }
             },
             Err(e) => {
                 println!("{}", e);
                 None
-            },
+            }
         };
 
         Ok(Self {
@@ -50,19 +50,17 @@ impl Branch {
         let branches = repo.branches(Some(git2::BranchType::Local)).unwrap();
         branches.fold(vec![], |mut aggr, branch| match branch {
             Ok((branch, _type)) => match branch.name() {
-                Ok(Some(name)) => {
-                    match branch.get().peel_to_commit() {
-                        Ok(commit) => {
-                            aggr.push(Self {
-                                commit_id: commit.id().to_string(),
-                                is_head: branch.is_head(),
-                                name: name.to_string(),
-                                ahead_behind: None,
-                            });
-                            aggr
-                        },
-                        Err(_) => aggr,
+                Ok(Some(name)) => match branch.get().peel_to_commit() {
+                    Ok(commit) => {
+                        aggr.push(Self {
+                            commit_id: commit.id().to_string(),
+                            is_head: branch.is_head(),
+                            name: name.to_string(),
+                            ahead_behind: None,
+                        });
+                        aggr
                     }
+                    Err(_) => aggr,
                 },
                 _ => aggr,
             },
@@ -74,9 +72,8 @@ impl Branch {
         let mut remotes = HashSet::new();
         let mut branch_by_remote: HashMap<String, Vec<String>> = HashMap::new();
 
-        branch_names
-            .iter()
-            .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
+        branch_names.iter().for_each(|name| {
+            match repo.find_branch(name, git2::BranchType::Local) {
                 Ok(branch) => match branch.upstream() {
                     Ok(upstream) => match upstream.name() {
                         Ok(Some(upstream_name)) => {
@@ -86,43 +83,44 @@ impl Branch {
                             remotes.insert(remote_name.clone());
                             (*branch_by_remote.entry(remote_name).or_insert(vec![]))
                                 .push(branch_name);
-                        },
+                        }
                         Err(e) => println!("{}", e),
-                        _ => {},
+                        _ => {}
                     },
                     Err(e) => println!("{}", e),
                 },
                 Err(e) => println!("{}", e),
-            });
+            }
+        });
 
         remotes
             .iter()
             .for_each(|remote_name| match repo.find_remote(remote_name) {
                 Ok(mut remote) => match remote.fetch(&branch_by_remote[remote_name], None, None) {
                     Err(e) => println!("{}", e),
-                    _ => {},
+                    _ => {}
                 },
                 Err(e) => println!("{}", e),
             });
 
-        branch_names
-            .iter()
-            .fold(vec![], |mut aggr, branch_name| match repo.find_branch(branch_name, git2::BranchType::Local) {
+        branch_names.iter().fold(vec![], |mut aggr, branch_name| {
+            match repo.find_branch(branch_name, git2::BranchType::Local) {
                 Ok(branch) => match Branch::from_git2(&repo, branch) {
                     Ok(branch) => {
                         aggr.push(branch);
                         aggr
-                    },
+                    }
                     Err(e) => {
                         println!("{}", e);
                         aggr
-                    },
+                    }
                 },
                 Err(e) => {
                     println!("{}", e);
                     aggr
-                },
-            })
+                }
+            }
+        })
     }
 }
 

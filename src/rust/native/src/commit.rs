@@ -1,9 +1,9 @@
-use serde::ser::{Serialize, Serializer, SerializeStruct};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashSet, HashMap};
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use md5::{Md5, Digest};
+use md5::{Digest, Md5};
 
 #[derive(Clone)]
 pub struct Commit {
@@ -37,18 +37,20 @@ impl Commit {
         let mut ids = HashSet::new();
         let mut heap = BinaryHeap::new();
 
-        branch_names
-            .iter()
-            .for_each(|name| match repo.find_branch(name, git2::BranchType::Local) {
+        branch_names.iter().for_each(|name| {
+            match repo.find_branch(name, git2::BranchType::Local) {
                 Ok(branch) => match branch.get().peel_to_commit() {
-                    Ok(commit) => if !ids.contains(&commit.id()) {
-                        ids.insert(commit.id());
-                        heap.push(Self::from_git2(commit));
-                    },
-                    Err(e) => println!("{}", e)
+                    Ok(commit) => {
+                        if !ids.contains(&commit.id()) {
+                            ids.insert(commit.id());
+                            heap.push(Self::from_git2(commit));
+                        }
+                    }
+                    Err(e) => println!("{}", e),
                 },
-                Err(e) => println!("{}", e)
-            });
+                Err(e) => println!("{}", e),
+            }
+        });
         let mut commits: Vec<Commit> = vec![];
 
         if heap.is_empty() {
@@ -73,7 +75,7 @@ impl Commit {
             }
         }
 
-        return commits
+        return commits;
     }
 }
 
@@ -104,7 +106,7 @@ impl Serialize for Commit {
                 .parents
                 .iter()
                 .map(|parent| parent.to_string())
-                .collect::<Vec<String>>()
+                .collect::<Vec<String>>(),
         )?;
         state.end()
     }

@@ -21,12 +21,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
     let branches: Vec<String> = js_array
         .iter()
-        .map(|js_value| {
-            js_value
-                .downcast::<JsString>()
-                .unwrap()
-                .value()
-        })
+        .map(|js_value| js_value.downcast::<JsString>().unwrap().value())
         .collect();
 
     let js_path: Handle<JsString> = cx.argument(0)?;
@@ -52,12 +47,7 @@ fn fetch(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
     let branch_names: Vec<String> = js_array
         .iter()
-        .map(|js_value| {
-            js_value
-                .downcast::<JsString>()
-                .unwrap()
-                .value()
-        })
+        .map(|js_value| js_value.downcast::<JsString>().unwrap().value())
         .collect();
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
