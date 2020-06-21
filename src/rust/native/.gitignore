@@ -2,3 +2,4 @@ artifacts.json
 index.node
 target
 main.rs
+*.iml
