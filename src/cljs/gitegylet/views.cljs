@@ -76,35 +76,6 @@
    {}
    commits))
 
-(defn inject-children
-  [commits]
-  (reduce-kv
-   (fn inject-one-commit
-     [aggr id commit]
-     (reduce
-      (fn inject-one-parent
-        [to-upd parent-id]
-        (if (contains? to-upd parent-id)
-          (update-in to-upd [parent-id :children]
-                     conj id)
-          to-upd))
-      aggr
-      (:parents commit)))
-   commits
-   commits))
-
-(defn oldest-commit
-  [commits-map ids]
-  (reduce
-   (fn oldest-finder
-     [oldest id]
-     (let [candidate (get commits-map id)]
-       (if (< (:timestamp candidate) (:timestamp oldest))
-         candidate
-         oldest)))
-   {:timestamp js/Infinity}
-   ids))
-
 (defn first-unused
   [used-columns]
   (->> (range)
@@ -207,9 +178,7 @@
            reverse-index (->> ordered-ids
                               (map-indexed (fn [i v] [v i]))
                               (into {}))
-           commits-map (->> commits
-                            (index-by-id)
-                            (inject-children))
+           commits-map (index-by-id　commits)
            icons (->> ordered-ids
                       (reduce
                        (fn author-md5-mapper [aggr id]
