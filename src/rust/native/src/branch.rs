@@ -5,6 +5,7 @@ pub struct Branch {
     commit_id: String,
     name: String,
     is_head: bool,
+    ahead_behind: Option<(usize, usize)>,
 }
 
 impl Branch {
@@ -19,6 +20,7 @@ impl Branch {
                                 commit_id: commit.id().to_string(),
                                 is_head: branch.is_head(),
                                 name: name.to_string(),
+                                ahead_behind: None,
                             });
                             aggr
                         },
@@ -41,6 +43,10 @@ impl Serialize for Branch {
         state.serialize_field("commitId", &self.commit_id.to_string())?;
         state.serialize_field("name", &self.name)?;
         state.serialize_field("isHead", &self.is_head)?;
+        match self.ahead_behind {
+            Some(ahead_behind) => state.serialize_field("aheadBehind", &ahead_behind)?,
+            None => {}
+        };
         state.end()
     }
 }
