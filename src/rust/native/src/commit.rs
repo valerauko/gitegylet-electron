@@ -60,15 +60,17 @@ impl Commit {
         while commits.len() < 250 {
             match heap.pop() {
                 Some(commit) => {
-                    repo.find_commit(commit.id)
-                        .unwrap()
-                        .parents()
-                        .for_each(|parent| {
-                            if !ids.contains(&parent.id()) {
-                                ids.insert(parent.id());
-                                heap.push(Commit::from_git2(parent));
+                    for parent_id in &commit.parents {
+                        if !ids.contains(parent_id) {
+                            match repo.find_commit(*parent_id) {
+                                Ok(parent) => {
+                                    ids.insert(*parent_id);
+                                    heap.push(Commit::from_git2(parent));
+                                }
+                                Err(e) => println!("{}", e)
                             }
-                        });
+                        }
+                    };
                     commits.push(commit);
                 }
                 None => break,
