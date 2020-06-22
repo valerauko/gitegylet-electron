@@ -76,89 +76,6 @@
    {}
    commits))
 
-(defn first-unused
-  [used-columns]
-  (->> (range)
-       (filter (fn [n]
-                 (not (contains? used-columns n))))
-       (first)))
-
-(defn column-commit-map
-  ([commits-map initial-ids]
-   (column-commit-map commits-map #{} {} initial-ids true))
-  ([commits-map initial-used-columns initial-column-map initial-ids should-recur-parents]
-   (loop [used-columns initial-used-columns
-          column-map initial-column-map
-          ids initial-ids]
-     (let [current-id (first ids)
-           ; _ (inspect current-id)
-           remaining (rest ids)]
-       ;; procedural as fuck
-       (let [current-commit (get commits-map current-id)
-             current-column (get column-map current-id
-                                 (first-unused used-columns))
-             ;; override!
-             ; _ (inspect [0 current-id
-             ;             "current-column" current-column
-             ;             "(get column-map current-id" (get column-map current-id)
-             ;             "(first-unused used-columns)" (first-unused used-columns)])
-             column-map (assoc column-map current-id current-column)
-             ;; override!
-             used-columns (conj used-columns current-column)
-             ;; the first parent gets the column if it's not present yet
-             first-parent-id (->> current-commit
-                                  (:parents)
-                                  (first))
-             ; _ (inspect [1 current-id "first-parent-id" first-parent-id])
-             first-parent (get commits-map first-parent-id)
-             ;; override!
-             ; _ (inspect [-1 current-id used-columns column-map])
-             ;; first-parent-id can be nil if current-commit wasn't in
-             ;; column-map. this can happen if it's outside the selected
-             ;; commit range
-             column-map (if (or (nil? first-parent-id)
-                                (not should-recur-parents)
-                                (contains? column-map first-parent-id))
-                          column-map
-                          (assoc column-map
-                                 first-parent-id
-                                 current-column))
-             ; _ (inspect [2 current-id used-columns column-map])
-             other-parents (rest (:parents current-commit))
-             ;; double override!
-             [used-columns column-map]
-             (if (and should-recur-parents
-                      (not (empty? other-parents)))
-               (column-commit-map
-                commits-map
-                used-columns
-                column-map
-                ;; intentional. prevents other-parents from overriding the
-                ;; column of first-parent
-                (:parents current-commit)
-                ;; only do one layer of parents
-                ;; don't recurse further
-                false)
-               [used-columns column-map])
-
-             ; _ (inspect [3 current-id used-columns column-map])
-             ;; override again!
-             used-columns
-             (let [first-parent-column (column-map first-parent-id)]
-               (if (and should-recur-parents
-                        (not= current-column first-parent-column))
-                 (disj used-columns current-column)
-                 used-columns))
-
-             ; _ (inspect [4 current-id used-columns column-map])
-             ]
-         (if-not (empty? remaining)
-           (recur
-             used-columns
-             column-map
-             remaining)
-           [used-columns column-map]))))))
-
 (defn color
   ([i] (color i -1))
   ([i head]
@@ -205,7 +122,6 @@
                        {})
                       (vals)
                       (into [:defs]))
-           [_ column-map] (column-commit-map commits-map ordered-ids)
            column-count (->> commits (map #(.-column %)) (apply max) inc)
            columns (range column-count)
            head-col (->> head (.-id) commits-map :column)
