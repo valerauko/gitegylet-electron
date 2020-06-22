@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "shadow-cljs watch main renderer",
     "build": "shadow-cljs compile main renderer",
+    "lint": "shadow-cljs run clj-kondo.main --lint src/cljs",
     "rust": "electron-build-env neon build git --release",
     "repl": "shadow-cljs node-repl",
     "release": "shadow-cljs release main renderer",
