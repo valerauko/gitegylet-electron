@@ -1,5 +1,5 @@
 (ns gitegylet.db
-  (:require [cljs.spec.alpha :as s]
+  (:require ; [cljs.spec.alpha :as s]
             [cljs.reader :refer [read-string]]
             [re-frame.core :as rf]))
 

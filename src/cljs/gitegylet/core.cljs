@@ -1,6 +1,5 @@
 (ns gitegylet.core
-  (:require [reagent.core :as reagent]
-            [reagent.dom :as dom]
+  (:require [reagent.dom :as dom]
             [re-frame.core :as rf]
             [devtools.core :as devtools]
             [gitegylet.config :as config]
@@ -14,7 +13,7 @@
 ; forwarded by resources/preload.js
 (.addEventListener js/window "message"
   (fn ipc-handler [event]
-    (if (= (-> event .-data .-type) "ipc-response")
+    (when (= (-> event .-data .-type) "ipc-response")
       (let [message (-> event .-data .-payload)
             handler (keyword 'gitegylet.events (.-type message))
             ; converting js objects to cljs maps is a pain in the ass

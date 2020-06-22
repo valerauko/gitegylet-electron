@@ -1,9 +1,6 @@
 (ns gitegylet.events
-  (:require
-    [re-frame.core :as rf]
-    [cljs.spec.alpha :as s]
-    [gitegylet.git :refer [git]]
-    [gitegylet.db :as db]))
+  (:require [re-frame.core :as rf]
+            [gitegylet.db :as db]))
 
 (def persist
   "Interceptor to persist database"
@@ -12,7 +9,7 @@
 (rf/reg-event-fx
   ::initialize-db
   [(rf/inject-cofx ::db/persistence)]
-  (fn [{:keys [db persisted]}]
+  (fn [{:keys [persisted]}]
     {:db (merge {:repo "."} persisted)}))
 
 (rf/reg-event-db

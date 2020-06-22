@@ -1,6 +1,5 @@
 (ns gitegylet.views
-  (:require [reagent.core  :as reagent]
-            [re-frame.core :as rf]
+  (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
             ["react-checkbox-tree" :as CheckboxTree]
             [gitegylet.events :as events]
@@ -123,7 +122,6 @@
                       (vals)
                       (into [:defs]))
            column-count (->> commits (map #(.-column %)) (apply max) inc)
-           columns (range column-count)
            head-col (->> head (.-id) commits-map :column)
            canvas-em-height (* 2 (count ordered-ids))
            svg-header [:svg {:style
