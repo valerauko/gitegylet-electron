@@ -28,7 +28,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
     let repo = git2::Repository::open(&repo_path).unwrap();
 
-    let commits = Commit::on_branches(repo, branches);
+    let commits = Commit::listed(repo, branches);
 
     if commits.is_empty() {
         return Ok(cx.empty_array());

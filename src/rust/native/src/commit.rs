@@ -7,12 +7,13 @@ use md5::{Digest, Md5};
 
 #[derive(Clone)]
 pub struct Commit {
-    id: git2::Oid,
+    pub id: git2::Oid,
     time: git2::Time,
     summary: String,
     message: String,
     author: git2::Signature<'static>,
-    parents: Vec<git2::Oid>,
+    pub parents: Vec<git2::Oid>,
+    column: Option<usize>,
 }
 
 impl Commit {
@@ -30,6 +31,7 @@ impl Commit {
             },
             author: commit.author().to_owned(),
             parents: commit.parent_ids().collect(),
+            column: None,
         }
     }
 
@@ -65,7 +67,7 @@ impl Commit {
                             match repo.find_commit(*parent_id) {
                                 Ok(parent) => {
                                     ids.insert(*parent_id);
-                                    heap.push(Commit::from_git2(parent));
+                                    heap.push(Self::from_git2(parent));
                                 }
                                 Err(e) => println!("{}", e)
                             }
@@ -78,6 +80,36 @@ impl Commit {
         }
 
         return commits;
+    }
+
+    pub fn listed(repo: git2::Repository, branch_names: Vec<String>) -> Vec<Self> {
+        let commits = Self::on_branches(repo, branch_names);
+        let mut commits_map = HashMap::with_capacity(commits.len());
+        commits.iter().for_each(|commit| {
+            commits_map.insert(commit.id, commit);
+        });
+
+        let commit_ids: Vec<git2::Oid> = commits.iter().map(|commit| commit.id).collect();
+
+        let mut used_columns: HashSet<usize> = HashSet::new();
+        let mut column_map: HashMap<git2::Oid, usize> = HashMap::new();
+
+        column_mapper(
+            &commits_map,
+            &mut used_columns,
+            &mut column_map,
+            &commit_ids,
+            true,
+        );
+
+        commit_ids
+            .iter()
+            .map(|id| {
+                let mut commit = commits_map.get_mut(id).unwrap().clone();
+                commit.column = Some(column_map[id]);
+                commit
+            })
+            .collect()
     }
 }
 
@@ -110,6 +142,12 @@ impl Serialize for Commit {
                 .map(|parent| parent.to_string())
                 .collect::<Vec<String>>(),
         )?;
+
+        match self.column {
+            Some(column) => state.serialize_field("column", &column)?,
+            None => {}
+        };
+
         state.end()
     }
 }
@@ -133,3 +171,59 @@ impl PartialEq for Commit {
 }
 
 impl Eq for Commit {}
+
+fn first_unused(used_columns: &HashSet<usize>) -> usize {
+    let mut col = 0usize;
+    while used_columns.contains(&col) {
+        col += 1;
+    }
+    return col;
+}
+
+fn column_mapper(
+    commits_map: &HashMap<git2::Oid, &Commit>,
+    mut used_columns: &mut HashSet<usize>,
+    mut column_map: &mut HashMap<git2::Oid, usize>,
+    ids: &Vec<git2::Oid>,
+    should_recur_parents: bool,
+) {
+    for current_id in ids {
+        let current_column = *column_map
+            .entry(*current_id)
+            .or_insert(first_unused(&used_columns));
+        used_columns.insert(current_column);
+
+        if let Some(commit) = commits_map.get(current_id) {
+            if let Some(parent_id) = commit.parents.first() {
+                if should_recur_parents && !column_map.contains_key(parent_id) {
+                    column_map.insert(*parent_id, current_column);
+                }
+            }
+
+            if !should_recur_parents {
+                continue;
+            }
+
+            if commit.parents.len() > 1 {
+                column_mapper(
+                    &commits_map,
+                    &mut used_columns,
+                    &mut column_map,
+                    &commit.parents,
+                    false,
+                );
+            }
+
+            if let Some(parent_id) = commit.parents.first() {
+                match column_map.get(parent_id) {
+                    Some(parent_col) => {
+                        if *parent_col != current_column {
+                            used_columns.remove(&current_column);
+                        }
+                    }
+                    None => {}
+                }
+            }
+        }
+    }
+}
