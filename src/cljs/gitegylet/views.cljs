@@ -72,7 +72,7 @@
                                  :md5 (.-md5 author)})
                               :time (.-timestamp commit)
                               :parents parents
-                              :children #{}})))
+                              :column (.-column commit)})))
    {}
    commits))
 
@@ -208,7 +208,7 @@
            [_ column-map] (column-commit-map commits-map ordered-ids)
            column-count (->> commits (map #(.-column %)) (apply max) inc)
            columns (range column-count)
-           head-col (get column-map (.-id head))
+           head-col (->> head (.-id) commits-map :column)
            canvas-em-height (* 2 (count ordered-ids))
            svg-header [:svg {:style
                              {:width (str (* 2 column-count) "em")
