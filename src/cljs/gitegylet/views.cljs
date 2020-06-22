@@ -204,103 +204,103 @@
                                             "?s=" icon-size "&d=retro")}]]))))
                        {})
                       (vals)
-                      (into [:defs]))]
-       (let [[_ column-map] (column-commit-map commits-map ordered-ids)
-             column-count (->> column-map vals (apply max) inc)
-             columns (range column-count)
-             head-col (get column-map (.-id head))
-             canvas-em-height (* 2 (count ordered-ids))
-             svg-header [:svg {:style
-                               {:width (str (* 2 column-count) "em")
-                                :height (str canvas-em-height "em")
-                                :transform "scale(-1,1)"}}
-                         icons]]
-         (->> ordered-ids
-              (map-indexed
-               (fn commit-drawer [idx id]
-                 (let [commit (get commits-map id)
-                       parent-ids (:parents commit)
-                       first-parent-id (first parent-ids)
-                       merge? (> (count parent-ids) 1)
-                       column (get column-map id)
-                       commit-x (+ 16 (* 32 column))
-                       commit-y (+ 16 (* 32 idx))
-                       commit-color (color column head-col)
-                       circle
-                       [:circle {:key (gensym)
-                                 :r (if merge? 6 12)
-                                 :cx commit-x
-                                 :cy commit-y
-                                 :stroke-width 2.5
-                                 :stroke commit-color
-                                 :fill (if merge?
-                                         commit-color
-                                         (str " url(#"
-                                              (-> commit :author :md5)
-                                              ")"))}]]
-                   (->> parent-ids
-                        (map
-                         (fn path-drawer [parent-id]
-                           (let [parent (get commits-map parent-id)
-                                 parent-column (get column-map parent-id)
-                                 path-color (if (= first-parent-id parent-id)
-                                              commit-color
-                                              (color parent-column head-col))
-                                 parent-at (get reverse-index parent-id
-                                                canvas-em-height)
-                                 parent-x (+ 16 (* 32 parent-column))
-                                 parent-y (+ 16 (* 32 parent-at))]
-                             (if (= parent-column column)
-                               [:path
-                                {:key (gensym)
-                                 :stroke path-color
-                                 :stroke-width 2.5
-                                 :fill "none"
-                                 :d (join " "
-                                      [(join " " ["M" commit-x commit-y])
-                                       (join " " ["L" parent-x parent-y])])}]
-                               [:path
-                                {:key (gensym)
-                                 :stroke path-color
-                                 :stroke-width 2.5
-                                 :fill "none"
-                                 :d (if (< parent-x commit-x)
-                                      ;; left side
-                                      (if (and merge?
-                                               (not= parent-id first-parent-id))
-                                        (join
-                                         " "
-                                         [(join " " ["M" commit-x commit-y])
-                                          (join " " ["L" (+ 16 parent-x) commit-y])
-                                          (join " " ["A" 16 16 0 0 0
-                                                         parent-x (+ 16 commit-y)])
-                                          (join " " ["L" parent-x parent-y])])
-                                        (join
-                                         " "
-                                         [(join " " ["M" commit-x commit-y])
-                                          (join " " ["L" commit-x (- parent-y 16)])
-                                          (join " " ["A" 16 16 0 0 1
-                                                         (- commit-x 16) parent-y])
-                                          (join " " ["L" parent-x parent-y])]))
-                                      ;; right side
-                                      (if (and merge?
-                                               (not= parent-id first-parent-id))
-                                        (join
-                                         " "
-                                         [(join " " ["M" commit-x commit-y])
-                                          (join " " ["L" (- parent-x 16) commit-y])
-                                          (join " " ["A" 16 16 0 0 1
-                                                         parent-x (+ 16 commit-y)])
-                                          (join " " ["L" parent-x parent-y])])
-                                        (join
-                                         " "
-                                         [(join " " ["M" commit-x commit-y])
-                                          (join " " ["L" commit-x (- parent-y 16)])
-                                          (join " " ["A" 16 16 0 0 0
-                                                         (+ 16 commit-x) parent-y])
-                                          (join " " ["L" parent-x parent-y])])))}]))))
-                        (append circle)))))
-              (into svg-header))))
+                      (into [:defs]))
+           [_ column-map] (column-commit-map commits-map ordered-ids)
+           column-count (->> commits (map #(.-column %)) (apply max) inc)
+           columns (range column-count)
+           head-col (get column-map (.-id head))
+           canvas-em-height (* 2 (count ordered-ids))
+           svg-header [:svg {:style
+                             {:width (str (* 2 column-count) "em")
+                              :height (str canvas-em-height "em")
+                              :transform "scale(-1,1)"}}
+                       icons]]
+       (->> ordered-ids
+            (map-indexed
+             (fn commit-drawer [idx id]
+               (let [commit (get commits-map id)
+                     parent-ids (:parents commit)
+                     first-parent-id (first parent-ids)
+                     merge? (> (count parent-ids) 1)
+                     column (:column commit)
+                     commit-x (+ 16 (* 32 column))
+                     commit-y (+ 16 (* 32 idx))
+                     commit-color (color column head-col)
+                     circle
+                     [:circle {:key (gensym)
+                               :r (if merge? 6 12)
+                               :cx commit-x
+                               :cy commit-y
+                               :stroke-width 2.5
+                               :stroke commit-color
+                               :fill (if merge?
+                                       commit-color
+                                       (str " url(#"
+                                            (-> commit :author :md5)
+                                            ")"))}]]
+                 (->> parent-ids
+                      (map
+                       (fn path-drawer [parent-id]
+                         (let [parent (get commits-map parent-id)
+                               parent-column (:column parent)
+                               path-color (if (= first-parent-id parent-id)
+                                            commit-color
+                                            (color parent-column head-col))
+                               parent-at (get reverse-index parent-id
+                                              canvas-em-height)
+                               parent-x (+ 16 (* 32 parent-column))
+                               parent-y (+ 16 (* 32 parent-at))]
+                           (if (= parent-column column)
+                             [:path
+                              {:key (gensym)
+                               :stroke path-color
+                               :stroke-width 2.5
+                               :fill "none"
+                               :d (join " "
+                                        [(join " " ["M" commit-x commit-y])
+                                         (join " " ["L" parent-x parent-y])])}]
+                             [:path
+                              {:key (gensym)
+                               :stroke path-color
+                               :stroke-width 2.5
+                               :fill "none"
+                               :d (if (< parent-x commit-x)
+                                    ;; left side
+                                    (if (and merge?
+                                             (not= parent-id first-parent-id))
+                                      (join
+                                       " "
+                                       [(join " " ["M" commit-x commit-y])
+                                        (join " " ["L" (+ 16 parent-x) commit-y])
+                                        (join " " ["A" 16 16 0 0 0
+                                                   parent-x (+ 16 commit-y)])
+                                        (join " " ["L" parent-x parent-y])])
+                                      (join
+                                       " "
+                                       [(join " " ["M" commit-x commit-y])
+                                        (join " " ["L" commit-x (- parent-y 16)])
+                                        (join " " ["A" 16 16 0 0 1
+                                                   (- commit-x 16) parent-y])
+                                        (join " " ["L" parent-x parent-y])]))
+                                    ;; right side
+                                    (if (and merge?
+                                             (not= parent-id first-parent-id))
+                                      (join
+                                       " "
+                                       [(join " " ["M" commit-x commit-y])
+                                        (join " " ["L" (- parent-x 16) commit-y])
+                                        (join " " ["A" 16 16 0 0 1
+                                                   parent-x (+ 16 commit-y)])
+                                        (join " " ["L" parent-x parent-y])])
+                                      (join
+                                       " "
+                                       [(join " " ["M" commit-x commit-y])
+                                        (join " " ["L" commit-x (- parent-y 16)])
+                                        (join " " ["A" 16 16 0 0 0
+                                                   (+ 16 commit-x) parent-y])
+                                        (join " " ["L" parent-x parent-y])])))}]))))
+                      (append circle)))))
+            (into svg-header)))
      (->> commits
         (map
          (fn commit-to-element
