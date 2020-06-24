@@ -1,10 +1,10 @@
 # Gitegylet
 
->- Ez a gitt.
->- És mi ez? - kérdezte a tanár.
->- Ez egy olyan pép, amivel az üvegesek az ablakot beragasztják a fába. Az üveges bekeni oda, és az ember a körmével kikaparja az ablakból.
->- És ezt te kapartad ki?
->- Nem, kérem. Ez az egyleti gitt. 
+>– Ez a gitt.  
+>– És mi ez? - kérdezte a tanár.  
+>– Ez egy olyan pép, amivel az üvegesek az ablakot beragasztják a fába. Az üveges bekeni oda, és az ember a körmével kikaparja az ablakból.  
+>– És ezt te kapartad ki?  
+>– Nem, kérem. Ez az egyleti gitt.  
 >
 >—Molnár Ferenc: A Pál utcai fiúk
 
