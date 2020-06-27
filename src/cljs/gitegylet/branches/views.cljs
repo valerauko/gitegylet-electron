@@ -70,7 +70,5 @@
         nodes (group-branches (map #(split (:full-name %) #"/") branches))
         selected @(rf/subscribe [::subs/names-selected])
         expanded @(rf/subscribe [::subs/folders-expanded])]
-    (js/console.log (clj->js selected))
-    (js/console.log (clj->js expanded))
     [:div {:class "branches"}
      (layer indexed nodes selected expanded)]))

@@ -160,7 +160,6 @@
         (fn commit-to-element
           [commit]
           (let [relevant-branches (get indexed-branches (:id commit))]
-            (js/console.log (clj->js commit))
             [:li
              {:key (gensym)}
              (some->> relevant-branches
