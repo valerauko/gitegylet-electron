@@ -4,10 +4,6 @@
             [gitegylet.branches.views :refer [branches]]
             [gitegylet.views.commits :refer [commits]]))
 
-(defn inspect
-  [thing]
-  (js/console.log (str thing)))
-
 (defn ui
   []
   [:div
