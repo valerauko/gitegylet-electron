@@ -46,13 +46,13 @@
    [:ol]
    (map (fn [node]
           (if-let [children (:children node)]
-            [:li (:label node) (layer index children)]
+            [:li (:label node) (layer index children selected expanded)]
             (let [full-name (:value node)
                   branch (index full-name)
-                  selected? (selected full-name)]
+                  selected? (boolean (selected full-name))]
               [:li
                [:input {:type "checkbox"
-                        :checked selected?
+                        :default-checked selected?
                         :on-change
                         #(rf/dispatch [::events/branch-toggle
                                        full-name
@@ -69,5 +69,7 @@
         nodes (group-branches (map #(split (:full-name %) #"/") branches))
         selected @(rf/subscribe [::subs/branch-names-selected])
         expanded @(rf/subscribe [::subs/folders-expanded])]
+    (js/console.log (clj->js selected))
+    (js/console.log (clj->js expanded))
     [:div {:class "branches"}
      (layer indexed nodes selected expanded)]))

@@ -14,19 +14,19 @@
                 persisted)}))
 
 (rf/reg-event-db
- ::send-ipc-message
- (fn [db [_ message]]
-   (let [object {:type :ipc-request
-                 :payload message}]
-     (js/window.postMessage (clj->js object)))
-   db))
+  ::send-ipc-message
+  (fn [db [_ message]]
+    (let [object {:type :ipc-request
+                  :payload message}]
+      (js/window.postMessage (clj->js object)))
+    db))
 
 (rf/reg-event-db
- ::open-repo
- [persist]
- (fn [db [_ folder]]
-   ; if the dialog was cancelled folder is going to be empty
-   (if folder
-     ; override whole db when a new repo is opened
-     {:repo folder}
-     db)))
+  ::open-repo
+  [persist]
+  (fn [db [_ folder]]
+    ; if the dialog was cancelled folder is going to be empty
+    (if folder
+      ; override whole db when a new repo is opened
+      {:repo folder}
+      db)))
