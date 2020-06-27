@@ -64,7 +64,7 @@
 
 (defn branches
   []
-  (let [branches (map branch->map @(rf/subscribe [::subs/branches]))
+  (let [branches @(rf/subscribe [::subs/branches])
         indexed (index-by :full-name branches)
         nodes (group-branches (map #(split (:full-name %) #"/") branches))
         selected @(rf/subscribe [::subs/branch-names-selected])
