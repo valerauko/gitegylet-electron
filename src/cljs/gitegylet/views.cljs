@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]
             [gitegylet.events :as events]
             [gitegylet.branches.views :refer [branches]]
-            [gitegylet.views.commits :refer [commits]]))
+            [gitegylet.commits.views :refer [commits]]))
 
 (defn ui
   []

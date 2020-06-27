@@ -1,4 +1,4 @@
-(ns gitegylet.views.commits
+(ns gitegylet.commits.views
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
             [gitegylet.subs :as subs]))
