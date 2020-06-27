@@ -12,4 +12,6 @@
         :md5 (.-md5 author)})
      :time (.-timestamp commit)
      :parents parents
+     :message (.-message commit)
+     :summary (.-summary commit)
      :column (.-column commit)}))

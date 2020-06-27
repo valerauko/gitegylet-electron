@@ -1,7 +1,8 @@
 (ns gitegylet.commits.views
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
-            [gitegylet.subs :as subs]
+            [gitegylet.commits.subs :as subs]
+            [gitegylet.branches.subs :as branches]
             [gitegylet.commits.db :refer [commit->map]]))
 
 (defn index-by-id
@@ -9,8 +10,8 @@
   (reduce
    (fn id-indexer
      [aggr commit]
-     (let [commit-id (.-id commit)]
-       (assoc aggr commit-id (commit->map commit))))
+     (let [commit-id (:id commit)]
+       (assoc aggr commit-id commit)))
    {}
    commits))
 
@@ -26,10 +27,10 @@
   []
   (let [commits @(rf/subscribe [::subs/commits])
         head @(rf/subscribe [::subs/head])
-        branches @(rf/subscribe [::subs/branches-selected])
-        indexed-branches (group-by #(.-commitId %) branches)]
+        branches @(rf/subscribe [::branches/selected])
+        indexed-branches (group-by :commit-id branches)]
     [:div {:class "commits"}
-     (let [ordered-ids (->> commits (map #(.-id %)) (into []))
+     (let [ordered-ids (into [] (map :id) commits)
            reverse-index (->> ordered-ids
                               (map-indexed (fn [i v] [v i]))
                               (into {}))
@@ -60,8 +61,8 @@
                        {})
                       (vals)
                       (into [:defs]))
-           column-count (->> commits (map #(.-column %)) (apply max) inc)
-           head-col (->> head (.-id) commits-map :column)
+           column-count (->> commits (map :column) (apply max) (inc))
+           head-col (->> head (:id) (commits-map) (:column))
            canvas-em-height (* 2 (count ordered-ids))
            svg-header [:svg {:style
                              {:width (str (* 2 column-count) "em")

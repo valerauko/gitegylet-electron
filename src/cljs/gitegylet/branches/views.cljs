@@ -54,8 +54,9 @@
                [:input {:type "checkbox"
                         :default-checked selected?
                         :on-change
-                        #(rf/dispatch [::events/branch-toggle
+                        #(rf/dispatch [::events/toggle-selection
                                        full-name
+                                       selected
                                        (not selected?)])}]
                [:label {:style {:font-weight
                                 (if (:head? branch) "bold" "normal")}}
@@ -64,10 +65,10 @@
 
 (defn branches
   []
-  (let [branches @(rf/subscribe [::subs/branches])
+  (let [branches @(rf/subscribe [::subs/locals])
         indexed (index-by :full-name branches)
         nodes (group-branches (map #(split (:full-name %) #"/") branches))
-        selected @(rf/subscribe [::subs/branch-names-selected])
+        selected @(rf/subscribe [::subs/names-selected])
         expanded @(rf/subscribe [::subs/folders-expanded])]
     (js/console.log (clj->js selected))
     (js/console.log (clj->js expanded))
