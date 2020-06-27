@@ -154,26 +154,27 @@
                                         (join " " ["L" parent-x parent-y])])))}]))))
                       (append circle)))))
             (into svg-header)))
-     (->> commits
-        (map
-         (fn commit-to-element
-           [commit]
-           (let [relevant-branches (get indexed-branches (.-id commit))]
-             [:li
-              {:key (gensym)}
-              (some->> relevant-branches
-                       (map (fn [branch]
-                              [:span
-                               {:key (gensym)
-                                :class ["branch-label"
-                                        (when (.-isHead branch)
-                                          "head")]}
-                               (-> (.-name branch)
-                                   (split #"/")
-                                   (last))])))
-              [:span
-               {:key (gensym)
-                :class ["message"]
-                :title (.-id commit)}
-               (.-summary commit)]])))
-          (into [:ol]))]))
+     (into [:ol]
+       (map
+        (fn commit-to-element
+          [commit]
+          (let [relevant-branches (get indexed-branches (:id commit))]
+            (js/console.log (clj->js commit))
+            [:li
+             {:key (gensym)}
+             (some->> relevant-branches
+                      (map (fn [branch]
+                             [:span
+                              {:key (gensym)
+                               :class ["branch-label"
+                                       (when (:head? branch)
+                                         "head")]}
+                              (-> (:full-name branch)
+                                  (split #"/")
+                                  (last))])))
+             [:span
+              {:key (gensym)
+               :class ["message"]
+               :title (:id commit)}
+              (:summary commit)]])))
+           commits)]))
