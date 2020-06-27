@@ -44,23 +44,46 @@
   [index nodes selected expanded]
   (into
    [:ol]
-   (map (fn [node]
-          (if-let [children (:children node)]
-            [:li (:label node) (layer index children selected expanded)]
-            (let [full-name (:value node)
-                  branch (index full-name)
-                  selected? (boolean (selected full-name))]
-              [:li
-               [:input {:type "checkbox"
-                        :default-checked selected?
-                        :on-change
-                        #(rf/dispatch [::events/toggle-selection
-                                       full-name
-                                       selected
-                                       (not selected?)])}]
-               [:label {:style {:font-weight
-                                (if (:head? branch) "bold" "normal")}}
-                (:label node)]]))))
+   (map
+    (fn [node]
+      (let [full-name (:value node)]
+        (if-let [children (:children node)]
+          (let [expanded? (boolean (expanded full-name))]
+            [:li
+             {:class (conj ["folder"] (if expanded? "expanded" "closed"))}
+             [:span
+              {:class "label"}
+              [:span
+               {:class "name"
+                :on-click
+                #(rf/dispatch [::events/toggle-expansion
+                               full-name
+                               expanded
+                               (not expanded?)])}
+               (:label node)]]
+             (layer index children selected expanded)])
+          (let [branch (index full-name)
+                selected? (boolean (selected full-name))
+                [ahead behind] (:ahead-behind branch)]
+            [:li
+             {:class (-> ["leaf"]
+                         (conj (if (:head? branch) "head" "local"))
+                         (conj (if selected? "visible" "hidden")))
+              :on-click
+              #(rf/dispatch [::events/toggle-selection
+                             full-name
+                             selected
+                             (not selected?)])}
+             [:span
+              {:class "label"}
+              [:span
+               {:class "name"}
+               (:label node)]
+              (when (or (pos? ahead) (pos? behind))
+                [:span
+                 {:class "ab"}
+                 (when (pos? ahead) [:span {:class "ahead"} ahead])
+                 (when (pos? behind) [:span {:class "behind"} behind])])]])))))
    nodes))
 
 (defn branches

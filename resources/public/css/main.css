@@ -20,6 +20,147 @@ body {
   width: 260px;
 }
 
+.branches ol, .branches li {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.branches span.label {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  height: 2em;
+}
+
+.branches span.name {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0;
+  margin: 0;
+}
+
+.branches ol li.folder > span.label > span.name::before {
+  padding-right: .5em;
+}
+
+.branches ol > li.folder > span.label > span.name::before {
+  padding-left: 1.5em;
+}
+
+.branches ol ol li.folder > span.label > span.name::before {
+  padding-left: 3em;
+}
+
+.branches ol ol ol li.folder > span.label > span.name::before {
+  padding-left: 4.5em;
+}
+
+.branches ol ol ol ol li.folder > span.label > span.name::before {
+  padding-left: 6em;
+}
+
+.branches ol ol li.leaf > span.label > span.name::before {
+  padding-left: 1.5em;
+}
+
+.branches ol ol ol li.leaf > span.label > span.name::before {
+  padding-left: 3em;
+}
+
+.branches ol ol ol ol li.leaf > span.label > span.name::before {
+  padding-left: 4.5em;
+}
+
+.branches li.head {
+  background: #ffc806;
+  color: #27271f;
+}
+
+.branches li.local:hover {
+  background: #483f1c;
+}
+
+.branches span::before {
+  font-family: "FontAwesome";
+}
+
+.branches span.label::before, .branches span.name::before {
+  font-size: .8em;
+  display: inline-block;
+  width: 1.5em;
+  text-align: center;
+}
+
+.branches li ol span.name::before {
+  padding-right: .5em;
+}
+
+.branches li.closed > span.label > span.name::before {
+  content: "\f054"; /* chevron */
+}
+
+.branches li.closed ol, .branches li.closed li {
+  display: none;
+}
+
+.branches li.expanded > span.label > span.name::before {
+  content: "\f078"; /* chevron */
+}
+
+.branches li.leaf span.name::before {
+  content: "\f126"; /* branch */
+}
+
+.branches li.expanded ol {
+  display: block;
+}
+
+.branches li > span.label::before {
+  visibility: hidden;
+}
+
+.branches li > span.label:hover::before {
+  visibility: visible;
+}
+
+.branches li.visible > span.label::before {
+  content: "\f06e"; /* eye */
+}
+
+.branches li.hidden > span.label::before {
+  content: "\f070"; /* eye */
+}
+
+.branches li.hidden {
+  opacity: .5;
+}
+
+.branches span.ab {
+  flex: 1 0 auto;
+  text-align: right;
+  padding-right: .5em;
+}
+
+.branches span.ahead, .branches span.behind {
+  padding-left: .25em;
+}
+
+.branches span.ahead::before {
+  content: "\f0de";
+  padding-right: .1em;
+}
+
+.branches span.behind::before {
+  content: "\f0dd";
+  padding-right: .1em;
+}
+
 .commits {
   display: flex;
   flex-flow: row nowrap;
