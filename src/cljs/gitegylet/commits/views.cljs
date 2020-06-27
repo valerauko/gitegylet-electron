@@ -1,24 +1,16 @@
 (ns gitegylet.commits.views
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
-            [gitegylet.subs :as subs]))
+            [gitegylet.subs :as subs]
+            [gitegylet.commits.db :refer [commit->map]]))
 
 (defn index-by-id
   [commits]
   (reduce
    (fn id-indexer
      [aggr commit]
-     (let [parents (js->clj (.-parents commit))
-           commit-id (.-id commit)]
-       (assoc aggr commit-id {:id commit-id
-                              :author
-                              (let [author (.-author commit)]
-                                {:name (.-name author)
-                                 :email (.-email author)
-                                 :md5 (.-md5 author)})
-                              :time (.-timestamp commit)
-                              :parents parents
-                              :column (.-column commit)})))
+     (let [commit-id (.-id commit)]
+       (assoc aggr commit-id (commit->map commit))))
    {}
    commits))
 
