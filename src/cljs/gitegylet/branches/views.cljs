@@ -1,15 +1,8 @@
-(ns gitegylet.views.branches
+(ns gitegylet.branches.views
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
             [gitegylet.branches.events :as events]
-            [gitegylet.subs :as subs]))
-
-(defn branch->map
-  [branch]
-  {:full-name (.-name branch)
-   :commit-id (.-commitId branch)
-   :head? (.-isHead branch)
-   :ahead-behind (.-aheadBehind branch)})
+            [gitegylet.branches.subs :as subs]))
 
 (defn index-by
   [f coll]
