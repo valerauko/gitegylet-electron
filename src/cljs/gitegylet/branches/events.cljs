@@ -4,6 +4,7 @@
 
 (rf/reg-event-db
   ::toggle-selection
+  [persist]
   (fn [db [_ name selected selected?]]
     (let [f (if selected? conj disj)]
       (assoc db :branches-selected (f selected name)))))
