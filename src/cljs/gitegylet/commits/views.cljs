@@ -174,6 +174,7 @@
                                   (last))])))
              [:span
               {:key (gensym)
+               :id (:id commit)
                :class ["message"]
                :title (:id commit)}
               (:summary commit)]])))
