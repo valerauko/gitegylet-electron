@@ -1,7 +1,7 @@
 (ns gitegylet.views
   (:require [re-frame.core :as rf]
             [gitegylet.events :as events]
-            [gitegylet.views.branches :refer [branches]]
+            [gitegylet.branches.views :refer [branches]]
             [gitegylet.views.commits :refer [commits]]))
 
 (defn inspect

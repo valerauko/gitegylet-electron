@@ -10,19 +10,8 @@
   ::initialize-db
   [(rf/inject-cofx ::db/persistence)]
   (fn [{:keys [persisted]}]
-    {:db (merge {:repo "."} persisted)}))
-
-(rf/reg-event-db
- ::branch-select
- [persist]
- (fn [db [_ item]]
-   (assoc db :branches-selected item)))
-
-(rf/reg-event-db
- ::folder-expand
- [persist]
- (fn [db [_ item]]
-   (assoc db :folders-expanded item)))
+    {:db (merge {:repo "."}
+                persisted)}))
 
 (rf/reg-event-db
  ::send-ipc-message
