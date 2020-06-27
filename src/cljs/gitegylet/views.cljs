@@ -1,12 +1,8 @@
 (ns gitegylet.views
   (:require [re-frame.core :as rf]
             [gitegylet.events :as events]
-            [gitegylet.views.branches :refer [branches]]
-            [gitegylet.views.commits :refer [commits]]))
-
-(defn inspect
-  [thing]
-  (js/console.log (str thing)))
+            [gitegylet.branches.views :refer [branches]]
+            [gitegylet.commits.views :refer [commits]]))
 
 (defn ui
   []
