@@ -6,10 +6,11 @@
 
 (defn ui
   []
-  [:div
-   [:button
-    {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
-    "Open repo"]
+  [:div {:id "main"}
+   [:div
+    [:button
+     {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
+     "Open repo"]]
    [:div {:id "flex"}
     (branches)
     (commits)]])

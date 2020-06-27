@@ -4,20 +4,32 @@ body {
   font-family: sans-serif;
   user-select: none;
   margin: 0;
+  overflow: hidden;
 }
 
 * {
   min-width: 0;
 }
 
+#main {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  flex-flow: column nowrap;
+}
+
 #flex {
   display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
   flex-flow: row nowrap;
 }
 
 .branches {
   min-width: 200px;
   width: 260px;
+  flex: 1 1 auto;
+  overflow-y: auto;
 }
 
 .branches ol, .branches li {
@@ -95,6 +107,7 @@ body {
   display: inline-block;
   width: 1.5em;
   text-align: center;
+  flex: 0 0 auto;
 }
 
 .branches li ol span.name::before {
@@ -164,6 +177,30 @@ body {
 .commits {
   display: flex;
   flex-flow: row nowrap;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: .5em;
+  height: .5em;
+}
+
+:hover::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+:hover::-webkit-scrollbar-thumb {
+  background: #483f1c;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #ffc806;
 }
 
 .commits svg {
