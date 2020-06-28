@@ -42,7 +42,7 @@ fn commits(mut cx: FunctionContext) -> JsResult<JsArray> {
     Ok(js_commits)
 }
 
-fn fetch(mut cx: FunctionContext) -> JsResult<JsArray> {
+fn fetch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let arr_handle: Handle<JsArray> = cx.argument(1)?;
     let js_array: Vec<Handle<JsValue>> = arr_handle.to_vec(&mut cx)?;
     let branch_names: Vec<String> = js_array
@@ -53,15 +53,9 @@ fn fetch(mut cx: FunctionContext) -> JsResult<JsArray> {
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
     let repo = git2::Repository::open(&repo_path).unwrap();
 
-    let branches = Branch::fetch(repo, branch_names);
+    Branch::fetch(repo, branch_names);
 
-    let js_array = JsArray::new(&mut cx, branches.len() as u32);
-    for (i, branch) in branches.iter().enumerate() {
-        let js_branch = neon_serde::to_value(&mut cx, &branch)?;
-        js_array.set(&mut cx, i as u32, js_branch)?;
-    }
-
-    Ok(js_array)
+    Ok(cx.undefined())
 }
 
 fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {

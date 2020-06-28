@@ -78,7 +78,7 @@ impl Branch {
         })
     }
 
-    pub fn fetch(repo: git2::Repository, branch_names: Vec<String>) -> Vec<Self> {
+    pub fn fetch(repo: git2::Repository, branch_names: Vec<String>) {
         let mut remotes = HashSet::new();
         let mut branch_by_remote: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -108,29 +108,10 @@ impl Branch {
             .for_each(|remote_name| match repo.find_remote(remote_name) {
                 Ok(mut remote) => match remote.fetch(&branch_by_remote[remote_name], None, None) {
                     Err(e) => println!("{}", e),
-                    _ => {}
+                    _ => {},
                 },
                 Err(e) => println!("{}", e),
-            });
-
-        branch_names.iter().fold(vec![], |mut aggr, branch_name| {
-            match repo.find_branch(branch_name, git2::BranchType::Local) {
-                Ok(branch) => match Branch::from_git2(&repo, branch) {
-                    Ok(branch) => {
-                        aggr.push(branch);
-                        aggr
-                    }
-                    Err(e) => {
-                        println!("{}", e);
-                        aggr
-                    }
-                },
-                Err(e) => {
-                    println!("{}", e);
-                    aggr
-                }
-            }
-        })
+            })
     }
 
     pub fn checkout(&self, repo: &git2::Repository) {
