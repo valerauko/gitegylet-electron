@@ -7,11 +7,8 @@
 
 (rf/reg-sub
   ::locals
-  :<- [:gitegylet.subs/repo]
-  (fn [repo-path _]
-    (->> repo-path
-         (.localBranches git)
-         (map branch->map))))
+  (fn [{:keys [local-branches]} _]
+    local-branches))
 
 (rf/reg-sub
   ::names
