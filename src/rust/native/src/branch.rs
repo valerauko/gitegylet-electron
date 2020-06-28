@@ -134,7 +134,7 @@ impl Serialize for Branch {
     where
         S: Serializer,
     {
-        let mut state = serializer.serialize_struct("Branch", 3)?;
+        let mut state = serializer.serialize_struct("Branch", 4)?;
         state.serialize_field("commitId", &self.commit_id.to_string())?;
         state.serialize_field("name", &self.name)?;
         state.serialize_field("isHead", &self.is_head)?;
