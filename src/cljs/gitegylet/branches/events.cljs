@@ -19,7 +19,7 @@
    persist]
   (fn [{::keys [local-branches] :keys [db] :as cofx}]
     {:db (assoc db :local-branches local-branches)
-     :dispatch-n [::commits/reload]}))
+     :dispatch [::commits/reload]}))
 
 (rf/reg-event-db
   ::toggle-selection
