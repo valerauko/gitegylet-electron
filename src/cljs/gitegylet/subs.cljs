@@ -8,3 +8,8 @@
   ::repo
   (fn [db _]
     (:repo db)))
+
+(rf/reg-sub
+  ::statuses
+  (fn [db _]
+    (:statuses db)))

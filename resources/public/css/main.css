@@ -280,3 +280,12 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.commits span.status {
+  font-family: "FontAwesome";
+  display: inline-block;
+}
+
+.commits span.status {
+  margin-left: .5em;
+}
