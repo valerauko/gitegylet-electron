@@ -231,6 +231,10 @@ body {
   border: 1px solid #483f1c;
 }
 
+.branch-label + .branch-label {
+  margin-left: 0.4em;
+}
+
 .commits li .branch-label.head {
   background: #ffc806;
   color: #27271f;
