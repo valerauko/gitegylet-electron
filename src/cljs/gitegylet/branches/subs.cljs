@@ -7,11 +7,8 @@
 
 (rf/reg-sub
   ::locals
-  :<- [:gitegylet.subs/repo]
-  (fn [repo-path _]
-    (->> repo-path
-         (.localBranches git)
-         (map branch->map))))
+  (fn [{:keys [local-branches]} _]
+    local-branches))
 
 (rf/reg-sub
   ::names
@@ -41,8 +38,8 @@
   ::names-selected
   :<- [::names]
   :<- [::-selected]
-  (fn [[branches selected] _]
-    (or selected (into #{} branches))))
+  (fn [[all-names selected] _]
+    (or selected (into #{} all-names))))
 
 ;; tree expansion
 
@@ -56,11 +53,11 @@
   ::folders-expanded
   :<- [::names]
   :<- [::-folders-expanded]
-  (fn [[branches expanded] _]
+  (fn [[all-names expanded] _]
     (if expanded
       expanded
       (into #{}
         (comp (map #(-> % (split #"/") (butlast)))
               (filter (complement empty?))
               (map #(join "/" %)))
-        branches))))
+        all-names))))
