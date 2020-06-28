@@ -28,12 +28,13 @@
     {:dispatch-n [[::reload]
                   [::commits/reload-head]]}))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   ::toggle-selection
   [persist]
-  (fn [db [_ name selected selected?]]
+  (fn [{:keys [db]} [_ name selected selected?]]
     (let [f (if selected? conj disj)]
-      (assoc db :branches-selected (f selected name)))))
+      {:db (assoc db :branches-selected (f selected name))
+       :dispatch [::commits/reload]})))
 
 (rf/reg-event-db
   ::toggle-expansion
