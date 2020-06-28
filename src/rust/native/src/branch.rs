@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet};
 pub struct Branch {
     commit_id: String,
     name: String,
+    refname: String,
     is_head: bool,
     ahead_behind: (usize, usize),
 }
@@ -43,9 +44,15 @@ impl Branch {
             }
         };
 
+        let refname = match branch.get().name() {
+            Some(name) => name.to_string(),
+            None => return Err(git2::Error::from_str("Invalid branch refname")),
+        };
+
         Ok(Self {
             commit_id: commit_id.to_string(),
             name,
+            refname,
             is_head: branch.is_head(),
             ahead_behind,
         })
