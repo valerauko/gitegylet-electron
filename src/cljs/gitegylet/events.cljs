@@ -11,7 +11,8 @@
   [(rf/inject-cofx ::db/persistence)]
   (fn [{:keys [persisted]}]
     {:db (merge {:repo "."}
-                persisted)}))
+                persisted)
+     :dispatch [:gitegylet.branches.events/reload]}))
 
 (rf/reg-event-fx
   ::send-ipc-message
