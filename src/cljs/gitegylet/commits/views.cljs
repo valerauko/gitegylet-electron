@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
             [gitegylet.commits.subs :as subs]
+            [gitegylet.repo.subs :as repo]
             [gitegylet.branches.subs :as branches]
             [gitegylet.commits.db :refer [commit->map]]))
 
@@ -27,14 +28,26 @@
   []
   (let [commits @(rf/subscribe [::subs/commits])
         head @(rf/subscribe [::subs/head])
+        statuses @(rf/subscribe [::repo/statuses])
         branches @(rf/subscribe [::branches/selected])
         indexed-branches (group-by :commit-id branches)]
     [:div {:class "commits"}
-     (let [ordered-ids (into [] (map :id) commits)
+     (let [ordered-ids (into (if (empty? statuses) [] [:dirty])
+                             (map :id) commits)
            reverse-index (->> ordered-ids
                               (map-indexed (fn [i v] [v i]))
                               (into {}))
-           commits-map (index-by-id　commits)
+           commits-map (let [indexed (index-by-id commits)]
+                         (if (empty? statuses)
+                           indexed
+                           (assoc indexed
+                                  :dirty
+                                  (let [head-id (:id head)]
+                                    {:id :dirty
+                                     :parents [head-id]
+                                     :column (-> head-id
+                                                 indexed
+                                                 :column)}))))
            icons (->> ordered-ids
                       (reduce
                        (fn author-md5-mapper [aggr id]
@@ -64,15 +77,16 @@
            column-count (->> commits (map :column) (apply max) (inc))
            head-col (->> head (:id) (commits-map) (:column))
            canvas-em-height (* 2 (count ordered-ids))
-           svg-header [:svg {:style
-                             {:width (str (* 2 column-count) "em")
-                              :height (str canvas-em-height "em")
-                              :transform "scale(-1,1)"}}
-                       icons]]
+           svg-header (-> [:svg {:style
+                                 {:width (str (* 2 column-count) "em")
+                                  :height (str canvas-em-height "em")
+                                  :transform "scale(-1,1)"}}]
+                          (into icons))]
        (->> ordered-ids
             (map-indexed
              (fn commit-drawer [idx id]
-               (let [commit (get commits-map id)
+               (let [dirty? (= id :dirty)
+                     commit (get commits-map id)
                      parent-ids (:parents commit)
                      first-parent-id (first parent-ids)
                      merge? (> (count parent-ids) 1)
@@ -87,11 +101,13 @@
                                :cy commit-y
                                :stroke-width 2.5
                                :stroke commit-color
-                               :fill (if merge?
-                                       commit-color
-                                       (str " url(#"
-                                            (-> commit :author :md5)
-                                            ")"))}]]
+                               :style (if dirty? {:stroke-dasharray 4})
+                               :fill (cond
+                                       merge? commit-color
+                                       dirty? "#1a1d21"
+                                       :else (str " url(#"
+                                                  (-> commit :author :md5)
+                                                  ")"))}]]
                  (->> parent-ids
                       (map
                        (fn path-drawer [parent-id]
@@ -110,6 +126,7 @@
                                :stroke path-color
                                :stroke-width 2.5
                                :fill "none"
+                               :style (if dirty? {:stroke-dasharray 4})
                                :d (join " "
                                         [(join " " ["M" commit-x commit-y])
                                          (join " " ["L" parent-x parent-y])])}]
@@ -155,27 +172,47 @@
                                         (join " " ["L" parent-x parent-y])])))}]))))
                       (append circle)))))
             (into svg-header)))
-     (into [:ol]
-       (map
-        (fn commit-to-element
-          [commit]
-          (let [relevant-branches (get indexed-branches (:id commit))]
-            [:li
-             {:key (gensym)}
-             (some->> relevant-branches
-                      (map (fn [branch]
-                             [:span
-                              {:key (gensym)
-                               :class ["branch-label"
-                                       (when (:head? branch)
-                                         "head")]}
-                              (-> (:full-name branch)
-                                  (split #"/")
-                                  (last))])))
-             [:span
-              {:key (gensym)
-               :id (:id commit)
-               :class ["message"]
-               :title (:id commit)}
-              (:summary commit)]])))
-           commits)]))
+     (-> [:ol]
+         (into (if (empty? statuses)
+                 []
+                 [[:li
+                   {:key (gensym)}
+                   (->> statuses
+                        (reduce
+                         (fn [aggr {:keys [status]}]
+                           (update aggr status inc))
+                         {})
+                        (map
+                         (fn [[status files]]
+                           [:span {:key (gensym)}
+                            [:span
+                             {:alt status
+                              :class "status"}
+                             (case status
+                               "modified" "\uf304"
+                               "new" "\uf0fe"
+                               "deleted" "\uf146")]
+                            (str " " files)])))]]))
+         (into (map
+                (fn commit-to-element
+                  [commit]
+                  (let [relevant-branches (get indexed-branches (:id commit))]
+                    [:li
+                     {:key (gensym)}
+                     (some->> relevant-branches
+                              (map (fn [branch]
+                                     [:span
+                                      {:key (gensym)
+                                       :class ["branch-label"
+                                               (when (:head? branch)
+                                                 "head")]}
+                                      (-> (:full-name branch)
+                                          (split #"/")
+                                          (last))])))
+                     [:span
+                      {:key (gensym)
+                       :id (:id commit)
+                       :class ["message"]
+                       :title (:id commit)}
+                      (:summary commit)]])))
+               commits))]))

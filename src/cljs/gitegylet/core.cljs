@@ -4,7 +4,8 @@
             [devtools.core :as devtools]
             [gitegylet.config :as config]
             [gitegylet.views :as views]
-            [gitegylet.events :as events]))
+            [gitegylet.events :as events]
+            [gitegylet.repo.events]))
 
 (set! *warn-on-infer* true)
 
@@ -15,7 +16,8 @@
   (fn ipc-handler [event]
     (when (= (-> event .-data .-type) "ipc-response")
       (let [message (-> event .-data .-payload)
-            handler (keyword 'gitegylet.events (.-type message))
+            ; TODO: figure out how to make this extensible
+            handler (keyword 'gitegylet.repo.events (.-type message))
             ; converting js objects to cljs maps is a pain in the ass
             payload (-> message .-payload ,,,)]
         (rf/dispatch [handler payload])))))

@@ -1,4 +1,4 @@
-(ns gitegylet.subs
+(ns gitegylet.repo.subs
   (:require
    [clojure.string :refer [join split]]
    [re-frame.core :as rf]
@@ -8,3 +8,8 @@
   ::repo
   (fn [db _]
     (:repo db)))
+
+(rf/reg-sub
+  ::statuses
+  (fn [db _]
+    (:statuses db)))

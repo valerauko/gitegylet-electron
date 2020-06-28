@@ -1,5 +1,6 @@
 (ns gitegylet.events
   (:require [re-frame.core :as rf]
+            [gitegylet.effects :as fx]
             [gitegylet.db :as db]))
 
 (def persist
@@ -12,7 +13,11 @@
   (fn [{:keys [persisted]}]
     {:db (merge {:repo "."}
                 persisted)
-     :dispatch [:gitegylet.branches.events/reload]}))
+     :dispatch [:gitegylet.branches.events/reload]
+     ::fx/interval {:action :start
+                    :id :status-poll
+                    :freq 2000
+                    :event [:gitegylet.repo.events/check-status]}}))
 
 (rf/reg-event-fx
   ::send-ipc-message
@@ -20,15 +25,3 @@
     (let [object {:type :ipc-request
                   :payload message}]
       (js/window.postMessage (clj->js object)))))
-
-(rf/reg-event-fx
-  ::open-repo
-  [persist]
-  (fn [cofx [_ folder]]
-    ; if the dialog was cancelled folder is going to be empty
-    (if folder
-      ; override whole db when a new repo is opened
-      {:db {:repo folder}
-       ; and reload branches
-       :dispatch [:gitegylet.branches.events/reload]}
-      cofx)))

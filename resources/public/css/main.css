@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "FontAwesome";
+  src: url("fa5.otf");
+}
+
 body {
   background: #1a1d21;
   color: #ccc;
@@ -274,4 +279,13 @@ body {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.commits span.status {
+  font-family: "FontAwesome";
+  display: inline-block;
+}
+
+.commits span.status {
+  margin-left: .5em;
 }
