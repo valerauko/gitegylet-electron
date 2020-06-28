@@ -13,20 +13,21 @@
     {:db (merge {:repo "."}
                 persisted)}))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   ::send-ipc-message
-  (fn [db [_ message]]
+  (fn [_ [_ message]]
     (let [object {:type :ipc-request
                   :payload message}]
-      (js/window.postMessage (clj->js object)))
-    db))
+      (js/window.postMessage (clj->js object)))))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   ::open-repo
   [persist]
-  (fn [db [_ folder]]
+  (fn [cofx [_ folder]]
     ; if the dialog was cancelled folder is going to be empty
     (if folder
       ; override whole db when a new repo is opened
-      {:repo folder}
-      db)))
+      {:db {:repo folder}
+       ; and reload branches
+       :dispatch [:gitegylet.branches.events/reload]}
+      cofx)))
