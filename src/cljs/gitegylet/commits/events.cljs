@@ -7,6 +7,18 @@
             [gitegylet.commits.db :refer [commit->map]]))
 
 (rf/reg-cofx
+  ::head
+  (fn [{{:keys [repo]} :db :as cofx}]
+    (assoc cofx ::head (commit->map (.head git repo)))))
+
+(rf/reg-event-fx
+  ::reload-head
+  [(rf/inject-cofx ::head)
+   persist]
+  (fn [{::keys [head] :keys [db]}]
+    {:db (assoc db :head head)}))
+
+(rf/reg-cofx
   ::visible-commits
   (fn [{names-selected ::branches/names-selected
         {:keys [repo]} :db
@@ -25,4 +37,5 @@
    (rf/inject-cofx ::visible-commits)
    persist]
   (fn [{::keys [visible-commits] :keys [db]}]
-    {:db (assoc db :visible-commits (or visible-commits []))}))
+    {:db (assoc db :visible-commits (or visible-commits []))
+     :dispatch [::reload-head]}))

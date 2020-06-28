@@ -12,6 +12,5 @@
 
 (rf/reg-sub
   ::head
-  :<- [:gitegylet.subs/repo]
-  (fn [repo-path _]
-    (commit->map (.head git repo-path))))
+  (fn [{:keys [head]} _]
+    head))
