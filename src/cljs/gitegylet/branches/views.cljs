@@ -69,13 +69,18 @@
              {:class (-> ["leaf"]
                          (conj (if (:head? branch) "head" "local"))
                          (conj (if selected? "visible" "hidden")))
-              :on-click
-              #(rf/dispatch [::events/toggle-selection
-                             full-name
-                             selected
-                             (not selected?)])}
+              :on-double-click
+              #(rf/dispatch [::events/checkout full-name])}
              [:span
               {:class "label"}
+              [:span
+               {:class "visibility-toggle"
+                :on-click
+                #(rf/dispatch [::events/toggle-selection
+                               full-name
+                               selected
+                               (not selected?)])}
+               (if selected? "\uf06e" "\uf070")]
               [:span
                {:class "name"}
                (:label node)]

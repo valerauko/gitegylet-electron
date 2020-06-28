@@ -98,11 +98,11 @@ body {
   background: #483f1c;
 }
 
-.branches span::before {
+.branches span::before, .branches span.visibility-toggle {
   font-family: "FontAwesome";
 }
 
-.branches span.label::before, .branches span.name::before {
+.branches span.visibility-toggle, .branches span.name::before {
   font-size: .8em;
   display: inline-block;
   width: 1.5em;
@@ -134,20 +134,14 @@ body {
   display: block;
 }
 
-.branches li > span.label::before {
+.branches span.visibility-toggle {
   visibility: hidden;
+  padding: .5em .1em;
+  cursor: pointer;
 }
 
-.branches li > span.label:hover::before {
+.branches li:hover > span.label > span.visibility-toggle {
   visibility: visible;
-}
-
-.branches li.visible > span.label::before {
-  content: "\f06e"; /* eye */
-}
-
-.branches li.hidden > span.label::before {
-  content: "\f070"; /* eye */
 }
 
 .branches li.hidden {

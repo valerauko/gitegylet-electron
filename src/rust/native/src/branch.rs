@@ -5,11 +5,17 @@ use std::collections::{HashMap, HashSet};
 pub struct Branch {
     commit_id: String,
     name: String,
+    refname: String,
     is_head: bool,
     ahead_behind: (usize, usize),
 }
 
 impl Branch {
+    pub fn by_name(repo: &git2::Repository, name: &str) -> Self {
+        let branch = repo.find_branch(name, git2::BranchType::Local).unwrap();
+        Self::from_git2(repo, branch).unwrap()
+    }
+
     pub fn from_git2(repo: &git2::Repository, branch: git2::Branch) -> Result<Self, git2::Error> {
         let name = match branch.name() {
             Ok(Some(name)) => name.to_string(),
@@ -38,9 +44,15 @@ impl Branch {
             }
         };
 
+        let refname = match branch.get().name() {
+            Some(name) => name.to_string(),
+            None => return Err(git2::Error::from_str("Invalid branch refname")),
+        };
+
         Ok(Self {
             commit_id: commit_id.to_string(),
             name,
+            refname,
             is_head: branch.is_head(),
             ahead_behind,
         })
@@ -119,6 +131,16 @@ impl Branch {
                 }
             }
         })
+    }
+
+    pub fn checkout(&self, repo: &git2::Repository) {
+        match repo.set_head(&self.refname) {
+            Ok(_) => match repo.checkout_head(None) {
+                Ok(_) => {},
+                Err(e) => println!("{}", e),
+            },
+            Err(e) => println!("{}", e),
+        }
     }
 }
 
