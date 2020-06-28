@@ -8,7 +8,11 @@
 >
 >—Molnár Ferenc: A Pál utcai fiúk
 
-Desktop git GUI.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/6322484/85952600-71e81900-b9a5-11ea-8f06-9ff4907b0be0.png" alt="Screenshot" />
+</p>
+
+Desktop git GUI work in progress.
 
 ## References
 * the idea of ["Rust in Electron"](https://keminglabs.com/blog/building-a-fast-electron-app-with-rust/)
