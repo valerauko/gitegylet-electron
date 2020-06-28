@@ -3,8 +3,9 @@ use neon::register_module;
 
 mod branch;
 mod commit;
+mod status;
 
-use crate::{branch::Branch, commit::Commit};
+use crate::{branch::Branch, commit::Commit, status::Status};
 
 fn head(mut cx: FunctionContext) -> JsResult<JsValue> {
     let js_path: Handle<JsString> = cx.argument(0)?;
@@ -88,11 +89,27 @@ fn checkout_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     Ok(cx.undefined())
 }
 
+fn statuses(mut cx: FunctionContext) -> JsResult<JsArray> {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
+
+    let statuses = Status::all(repo);
+
+    let js_array = JsArray::new(&mut cx, statuses.len() as u32);
+    for (i, status) in statuses.iter().enumerate() {
+        let js_status = neon_serde::to_value(&mut cx, &status)?;
+        js_array.set(&mut cx, i as u32, js_status)?;
+    }
+    Ok(js_array)
+}
+
 register_module!(mut m, {
     m.export_function("localBranches", local_branches)?;
     m.export_function("checkoutBranch", checkout_branch)?;
     m.export_function("fetch", fetch)?;
     m.export_function("commits", commits)?;
+    m.export_function("statuses", statuses)?;
     m.export_function("head", head)?;
     Ok(())
 });
