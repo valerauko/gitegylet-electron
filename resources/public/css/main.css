@@ -18,6 +18,32 @@ body {
   flex-flow: column nowrap;
 }
 
+#topbar {
+  display: flex;
+  justify-content: center;
+  padding: .5em;
+}
+
+#topbar button {
+  font-family: "FontAwesome";
+  display: block;
+  font-size: 16px;
+  width: 2em;
+  height: 2em;
+  background: inherit;
+  color: inherit;
+  border: 1px solid #483f1c;
+  border-radius: 0;
+}
+
+#topbar button:hover {
+  background: #483f1c;
+}
+
+#topbar button + button {
+  margin-left: .5em;
+}
+
 #flex {
   display: flex;
   flex: 1 1 auto;
@@ -27,9 +53,11 @@ body {
 
 .branches {
   min-width: 200px;
+  max-width: 260px;
   width: 260px;
   flex: 1 1 auto;
   overflow-y: auto;
+  margin-right: .5em;
 }
 
 .branches ol, .branches li {
@@ -229,6 +257,10 @@ body {
   display: block;
   padding: 0.2em 0.3em;
   border: 1px solid #483f1c;
+}
+
+.branch-label + .branch-label {
+  margin-left: 0.4em;
 }
 
 .commits li .branch-label.head {
