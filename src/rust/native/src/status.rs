@@ -10,7 +10,8 @@ pub struct Status {
 impl Status {
     pub fn all(repo: git2::Repository) -> Vec<Self> {
         let mut opts = git2::StatusOptions::new();
-        opts.include_ignored(false);
+        opts.include_ignored(false)
+            .include_untracked(true);
 
         repo.statuses(Some(&mut opts)).unwrap().iter().map(|entry| {
             let status = match entry.status() {
@@ -18,6 +19,10 @@ impl Status {
                 git2::Status::WT_MODIFIED => "modified",
                 git2::Status::WT_DELETED => "deleted",
                 git2::Status::WT_RENAMED => "renamed",
+                git2::Status::INDEX_NEW => "new",
+                git2::Status::INDEX_MODIFIED => "modified",
+                git2::Status::INDEX_DELETED => "deleted",
+                git2::Status::INDEX_RENAMED => "renamed",
                 git2::Status::CONFLICTED => "conflicted",
                 _ => "other",
             }.to_string();
