@@ -7,10 +7,11 @@
 (defn ui
   []
   [:div {:id "main"}
-   [:div
+   [:nav {:id "topbar"}
     [:button
-     {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])}
-     "Open repo"]]
+     {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])
+      :title "Open repo"}
+     "\uf07c"]]
    [:div {:id "flex"}
     (branches)
     (commits)]])
