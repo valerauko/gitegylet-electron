@@ -132,6 +132,16 @@ impl Branch {
             }
         })
     }
+
+    pub fn checkout(&self, repo: &git2::Repository) {
+        match repo.set_head(&self.refname) {
+            Ok(_) => match repo.checkout_head(None) {
+                Ok(_) => {},
+                Err(e) => println!("{}", e),
+            },
+            Err(e) => println!("{}", e),
+        }
+    }
 }
 
 impl Serialize for Branch {

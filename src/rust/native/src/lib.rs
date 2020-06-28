@@ -80,8 +80,23 @@ fn local_branches(mut cx: FunctionContext) -> JsResult<JsArray> {
     Ok(js_array)
 }
 
+fn checkout_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
+
+    let js_branch_name: Handle<JsString> = cx.argument(1)?;
+    let branch_name: String = js_branch_name.downcast::<JsString>().unwrap().value();
+    let branch = Branch::by_name(&repo, &branch_name);
+
+    branch.checkout(&repo);
+
+    Ok(cx.undefined())
+}
+
 register_module!(mut m, {
     m.export_function("localBranches", local_branches)?;
+    m.export_function("checkoutBranch", checkout_branch)?;
     m.export_function("fetch", fetch)?;
     m.export_function("commits", commits)?;
     m.export_function("head", head)?;
