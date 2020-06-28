@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "FontAwesome";
+  src: url("fa5.otf");
+}
+
 body {
   background: #1a1d21;
   color: #ccc;
