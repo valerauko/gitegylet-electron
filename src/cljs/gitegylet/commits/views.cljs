@@ -2,7 +2,7 @@
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
             [gitegylet.commits.subs :as subs]
-            [gitegylet.subs :as repo]
+            [gitegylet.repo.subs :as repo]
             [gitegylet.branches.subs :as branches]
             [gitegylet.commits.db :refer [commit->map]]))
 
