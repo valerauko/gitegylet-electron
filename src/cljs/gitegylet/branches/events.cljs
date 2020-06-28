@@ -22,6 +22,13 @@
      :dispatch [::commits/reload]}))
 
 (rf/reg-event-fx
+  ::fetch
+  (fn [{{:keys [repo] :as db} :db} [_ names]]
+    (let [branches (map branch->map (.fetch git repo (clj->js names)))]
+      {:db (assoc db :local-branches branches)
+       :dispatch [::commits/reload]})))
+
+(rf/reg-event-fx
   ::checkout
   (fn [{{:keys [repo]} :db} [_ name]]
     (.checkoutBranch git repo name)

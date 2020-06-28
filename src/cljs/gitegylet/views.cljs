@@ -11,7 +11,12 @@
     [:button
      {:on-click #(rf/dispatch [::events/send-ipc-message :open-repo])
       :title "Open repo"}
-     "\uf07c"]]
+     "\uf07c"]
+    (let [branches @(rf/subscribe [:gitegylet.branches.subs/names])]
+      [:button
+       {:on-click #(rf/dispatch [:gitegylet.branches.events/fetch branches])
+        :title "Fetch"}
+       "\uf021"])]
    [:div {:id "flex"}
     (branches)
     (commits)]])
