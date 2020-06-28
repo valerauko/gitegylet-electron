@@ -10,6 +10,11 @@ pub struct Branch {
 }
 
 impl Branch {
+    pub fn by_name(repo: &git2::Repository, name: &str) -> Self {
+        let branch = repo.find_branch(name, git2::BranchType::Local).unwrap();
+        Self::from_git2(repo, branch).unwrap()
+    }
+
     pub fn from_git2(repo: &git2::Repository, branch: git2::Branch) -> Result<Self, git2::Error> {
         let name = match branch.name() {
             Ok(Some(name)) => name.to_string(),
