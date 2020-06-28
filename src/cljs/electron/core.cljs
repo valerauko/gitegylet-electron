@@ -11,6 +11,8 @@
                                   :minWidth 800
                                   :height 600
                                   :minHeight 600
+                                  ; TODO: meaningful menus
+                                  :autoHideMenuBar true
                                   :icon (str js/__dirname "/public/img/gitt.png")
                                   :backgroundColor "#1a1d21"
                                   :webPreferences
