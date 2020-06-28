@@ -68,7 +68,9 @@
             [:li
              {:class (-> ["leaf"]
                          (conj (if (:head? branch) "head" "local"))
-                         (conj (if selected? "visible" "hidden")))}
+                         (conj (if selected? "visible" "hidden")))
+              :on-double-click
+              #(rf/dispatch [::events/checkout full-name])}
              [:span
               {:class "label"}
               [:span

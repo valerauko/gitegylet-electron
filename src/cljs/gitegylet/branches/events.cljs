@@ -21,6 +21,13 @@
     {:db (assoc db :local-branches local-branches)
      :dispatch [::commits/reload]}))
 
+(rf/reg-event-fx
+  ::checkout
+  (fn [{{:keys [repo]} :db} [_ name]]
+    (.checkoutBranch git repo name)
+    {:dispatch-n [[::reload]
+                  [::commits/reload-head]]}))
+
 (rf/reg-event-db
   ::toggle-selection
   [persist]
