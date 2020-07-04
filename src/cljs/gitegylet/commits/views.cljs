@@ -1,6 +1,7 @@
 (ns gitegylet.commits.views
   (:require [re-frame.core :as rf]
             [clojure.string :refer [split join]]
+            [gitegylet.menu :as menu]
             [gitegylet.commits.subs :as subs]
             [gitegylet.repo.subs :as repo]
             [gitegylet.branches.subs :as branches]
@@ -23,6 +24,15 @@
      (str "hsl(" hue ", 70%, 45%)"))))
 
 (defn append [item ls] (concat ls (list item)))
+
+(defn commit-menu
+  [event]
+  (let [commit-id (-> event .-target .-id)]
+    (-> [{:id "createBranch"
+          :label "Create &branch here"
+          :click (fn [] (js/console.log "id" commit-id))}]
+        (menu/build)
+        (.popup))))
 
 (defn commits
   []
@@ -212,6 +222,7 @@
                      [:span
                       {:key (gensym)
                        :id (:id commit)
+                       :on-context-menu commit-menu
                        :class ["message"]
                        :title (:id commit)}
                       (:summary commit)]])))
