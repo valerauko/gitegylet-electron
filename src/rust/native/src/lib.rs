@@ -89,6 +89,22 @@ fn checkout_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     Ok(cx.undefined())
 }
 
+fn create_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
+
+    let js_commit_id: Handle<JsString> = cx.argument(1)?;
+    let commit_id: String = js_path.downcast::<JsString>().unwrap().value();
+
+    let js_name: Handle<JsString> = cx.argument(2)?;
+    let name: String = js_path.downcast::<JsString>().unwrap().value();
+
+    Branch::create(&repo, &commit_id, &name);
+
+    Ok(cx.undefined())
+}
+
 fn statuses(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
@@ -107,6 +123,7 @@ fn statuses(mut cx: FunctionContext) -> JsResult<JsArray> {
 register_module!(mut m, {
     m.export_function("localBranches", local_branches)?;
     m.export_function("checkoutBranch", checkout_branch)?;
+    m.export_function("createBranch", create_branch)?;
     m.export_function("fetch", fetch)?;
     m.export_function("commits", commits)?;
     m.export_function("statuses", statuses)?;
