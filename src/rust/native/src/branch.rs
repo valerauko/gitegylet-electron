@@ -16,6 +16,16 @@ impl Branch {
         Self::from_git2(repo, branch).unwrap()
     }
 
+    pub fn create(repo: &git2::Repository, commit_id: &str, name: &str) {
+        let oid = git2::Oid::from_str(commit_id).unwrap();
+        let commit = repo.find_commit(oid).unwrap();
+
+        match repo.branch(name, &commit, false) {
+            Ok(_) => println!("Created branch {}", name),
+            Err(e) => println!("{:?}", e),
+        };
+    }
+
     pub fn from_git2(repo: &git2::Repository, branch: git2::Branch) -> Result<Self, git2::Error> {
         let name = match branch.name() {
             Ok(Some(name)) => name.to_string(),
