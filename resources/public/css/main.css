@@ -289,3 +289,19 @@ body {
 .commits span.status {
   margin-left: .5em;
 }
+
+dialog {
+  background: #1a1d21;
+  color: #ccc;
+  border: none;
+  padding: 0;
+  min-width: auto;
+}
+
+dialog div {
+  padding: 1em;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
