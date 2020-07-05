@@ -5,7 +5,7 @@
 
 (defn modal
   []
-  (let [content @(rf/subscribe [::subs/modal])]
+  (if-let [content @(rf/subscribe [::subs/modal])]
     [:dialog
      {:on-click #(.close (.-target %))}
      [:div
