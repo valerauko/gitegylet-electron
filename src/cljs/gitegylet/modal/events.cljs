@@ -8,6 +8,11 @@
         (js/document.querySelector)
         (.showModal))))
 
+(rf/reg-event-db
+  ::reset
+  (fn [{:keys [modal] :as db}]
+    (assoc db :modal nil)))
+
 (rf/reg-event-fx
   ::show
   (fn [{:keys [db]} [_ content]]

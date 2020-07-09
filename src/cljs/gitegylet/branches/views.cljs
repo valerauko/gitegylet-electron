@@ -10,8 +10,10 @@
    {:method "dialog"
     :on-submit (fn [e]
                  (let [input (-> e .-target .-children (.item 0) .-value)]
+                   (rf/dispatch [:gitegylet.modal.events/reset])
                    (rf/dispatch [::events/create commit-id input])))}
    [:input {:type "text"
+            :on-blur #(.focus (.-target %))
             :placeholder "Enter name for new branch"}]])
 
 (defn index-by

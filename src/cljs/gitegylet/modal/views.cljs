@@ -7,7 +7,8 @@
   []
   (let [content (or @(rf/subscribe [::subs/modal]) [:span])]
     [:dialog
-     {:on-click #(.close (.-target %))}
+     {:on-click #(.close (.-target %))
+      :on-cancel #(rf/dispatch [::events/reset])}
      [:div
       {:on-click #(.stopPropagation %)}
       content]]))
