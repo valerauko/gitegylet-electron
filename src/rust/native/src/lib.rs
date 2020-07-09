@@ -95,10 +95,10 @@ fn create_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let repo = git2::Repository::open(&repo_path).unwrap();
 
     let js_commit_id: Handle<JsString> = cx.argument(1)?;
-    let commit_id: String = js_path.downcast::<JsString>().unwrap().value();
+    let commit_id: String = js_commit_id.downcast::<JsString>().unwrap().value();
 
     let js_name: Handle<JsString> = cx.argument(2)?;
-    let name: String = js_path.downcast::<JsString>().unwrap().value();
+    let name: String = js_name.downcast::<JsString>().unwrap().value();
 
     Branch::create(&repo, &commit_id, &name);
 
