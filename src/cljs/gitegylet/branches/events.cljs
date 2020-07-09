@@ -24,8 +24,6 @@
 (rf/reg-event-fx
   ::create
   (fn [{{:keys [repo] :as db} :db} [_ commit-id name]]
-    (js/console.log "id" commit-id)
-    (js/console.log "name" name)
     (.createBranch git repo commit-id name)
     {:dispatch [::reload]}))
 
