@@ -4,6 +4,16 @@
             [gitegylet.branches.events :as events]
             [gitegylet.branches.subs :as subs]))
 
+(defn create-branch-modal
+  [commit-id]
+  [:form
+   {:method "dialog"
+    :on-submit (fn [e]
+                 (let [input (-> e .-target .-children (.item 0) .-value)]
+                   (rf/dispatch [::events/create commit-id input])))}
+   [:input {:type "text"
+            :placeholder "Enter name for new branch"}]])
+
 (defn index-by
   [f coll]
   (reduce

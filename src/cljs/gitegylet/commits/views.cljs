@@ -5,6 +5,7 @@
             [gitegylet.commits.subs :as subs]
             [gitegylet.repo.subs :as repo]
             [gitegylet.branches.subs :as branches]
+            [gitegylet.branches.views :refer [create-branch-modal]]
             [gitegylet.commits.db :refer [commit->map]]))
 
 (defn index-by-id
@@ -30,7 +31,8 @@
   (let [commit-id (-> event .-target .-id)]
     (-> [{:id "createBranch"
           :label "Create &branch here"
-          :click (fn [] (js/console.log "id" commit-id))}]
+          :click #(rf/dispatch [:gitegylet.modal.events/show
+                                (create-branch-modal commit-id)])}]
         (menu/build)
         (.popup))))
 
