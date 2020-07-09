@@ -2,7 +2,8 @@
   (:require [re-frame.core :as rf]
             [gitegylet.events :as events]
             [gitegylet.branches.views :refer [branches]]
-            [gitegylet.commits.views :refer [commits]]))
+            [gitegylet.commits.views :refer [commits]]
+            [gitegylet.modal.views :refer [modal]]))
 
 (defn ui
   []
@@ -19,4 +20,5 @@
        "\uf021"])]
    [:div {:id "flex"}
     (branches)
-    (commits)]])
+    (commits)]
+   (modal)])

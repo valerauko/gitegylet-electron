@@ -22,6 +22,12 @@
      :dispatch [::commits/reload]}))
 
 (rf/reg-event-fx
+  ::create
+  (fn [{{:keys [repo] :as db} :db} [_ commit-id name]]
+    (.createBranch git repo commit-id name)
+    {:dispatch [::reload]}))
+
+(rf/reg-event-fx
   ::fetch
   (fn [{{:keys [repo] :as db} :db} [_ names]]
     (let [branches (map branch->map (.fetch git repo (clj->js names)))]

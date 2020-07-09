@@ -11,7 +11,7 @@
 (defn persist
   "Persists DB to localStorage"
   [db]
-  (.setItem js/localStorage local-storage-key (str db)))
+  (.setItem js/localStorage local-storage-key (str (dissoc db :modal))))
 
 (rf/reg-cofx
   ::persistence
