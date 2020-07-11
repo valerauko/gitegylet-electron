@@ -39,3 +39,11 @@
   (fn [{::keys [visible-commits] :keys [db]}]
     {:db (assoc db :visible-commits (or visible-commits []))
      :dispatch [::reload-head]}))
+
+(rf/reg-event-db
+  ::toggle-select
+  [persist
+   (rf/path :selected-commit)]
+  (fn [current-selected [_ new-selected]]
+    (when-not (= current-selected new-selected)
+      new-selected)))

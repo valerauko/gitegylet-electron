@@ -12,3 +12,8 @@
   ::head
   (fn [{:keys [head]} _]
     head))
+
+(rf/reg-sub
+  ::selected
+  (fn [{:keys [selected-commit]}]
+    selected-commit))
