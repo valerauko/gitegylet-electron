@@ -22,8 +22,9 @@
 (defn color
   ([i] (color i -1))
   ([i head]
-   (let [hue (rem (+ 50 (* (- i head) 45)) 360)]
-     (str "hsl(" hue ", 70%, 45%)"))))
+   (let [bs (Math/abs (- (rem i 5) head))
+         v (- 50 (* bs 10))]
+     (str "hsl(45, 100%, " v "%)"))))
 
 (defn append [item ls] (concat ls (list item)))
 
