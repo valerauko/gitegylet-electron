@@ -193,15 +193,15 @@ fn column_mapper(
             .or_insert(first_unused(&used_columns));
         used_columns.insert(current_column);
 
+        if !should_recur_parents {
+            continue;
+        }
+
         if let Some(commit) = commits_map.get(current_id) {
             if let Some(parent_id) = commit.parents.first() {
-                if should_recur_parents && !column_map.contains_key(parent_id) {
+                if !column_map.contains_key(parent_id) {
                     column_map.insert(*parent_id, current_column);
                 }
-            }
-
-            if !should_recur_parents {
-                continue;
             }
 
             if commit.parents.len() > 1 {
