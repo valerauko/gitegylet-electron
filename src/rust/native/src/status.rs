@@ -15,15 +15,15 @@ impl Status {
 
         repo.statuses(Some(&mut opts)).unwrap().iter().map(|entry| {
             let status = match entry.status() {
-                git2::Status::WT_NEW => "new",
-                git2::Status::WT_MODIFIED => "modified",
-                git2::Status::WT_DELETED => "deleted",
-                git2::Status::WT_RENAMED => "renamed",
-                git2::Status::INDEX_NEW => "new",
-                git2::Status::INDEX_MODIFIED => "modified",
-                git2::Status::INDEX_DELETED => "deleted",
-                git2::Status::INDEX_RENAMED => "renamed",
-                git2::Status::CONFLICTED => "conflicted",
+                s if s.contains(git2::Status::WT_NEW) => "new",
+                s if s.contains(git2::Status::WT_MODIFIED) => "modified",
+                s if s.contains(git2::Status::WT_DELETED) => "deleted",
+                s if s.contains(git2::Status::WT_RENAMED) => "renamed",
+                s if s.contains(git2::Status::INDEX_NEW) => "new",
+                s if s.contains(git2::Status::INDEX_MODIFIED) => "modified",
+                s if s.contains(git2::Status::INDEX_DELETED) => "deleted",
+                s if s.contains(git2::Status::INDEX_RENAMED) => "renamed",
+                s if s.contains(git2::Status::CONFLICTED) => "conflicted",
                 _ => "other",
             }.to_string();
 
