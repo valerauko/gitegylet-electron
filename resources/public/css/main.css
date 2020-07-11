@@ -238,6 +238,7 @@ body {
 .commits ol {
   flex: 1 1 100%;
   min-width: 0;
+  height: max-content;
 }
 
 .commits ol, .commits li {
@@ -253,6 +254,17 @@ body {
   align-items: center;
   box-sizing: border-box;
   height: 2em;
+}
+
+.commits li.selected {
+  background: #ffc806;
+  color: #27271f;
+  position: sticky;
+  top: 0;
+}
+
+.commits li:not(.selected):hover {
+  background: #483f1c;
 }
 
 .commits li .branch-label {

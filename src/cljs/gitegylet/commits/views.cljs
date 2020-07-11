@@ -3,6 +3,7 @@
             [clojure.string :refer [split join]]
             [gitegylet.menu :as menu]
             [gitegylet.commits.subs :as subs]
+            [gitegylet.commits.events :as events]
             [gitegylet.repo.subs :as repo]
             [gitegylet.branches.subs :as branches]
             [gitegylet.branches.views :refer [create-branch-modal]]
@@ -210,7 +211,13 @@
                   [commit]
                   (let [relevant-branches (get indexed-branches (:id commit))]
                     [:li
-                     {:key (gensym)}
+                     {:key (gensym)
+                      :on-context-menu commit-menu
+                      :on-click #(rf/dispatch [::events/toggle-select
+                                               (:id commit)])
+                      :class [(when (= (:id commit)
+                                       @(rf/subscribe [::subs/selected]))
+                                "selected")]}
                      (some->> relevant-branches
                               (map (fn [branch]
                                      [:span
@@ -224,7 +231,6 @@
                      [:span
                       {:key (gensym)
                        :id (:id commit)
-                       :on-context-menu commit-menu
                        :class ["message"]
                        :title (:id commit)}
                       (:summary commit)]])))
