@@ -7,10 +7,10 @@
 (defn init-browser []
   (reset! main-window (BrowserWindow.
                         (clj->js {:fullscreenable false ;; the f11 fullscreen
-                                  :width 800
-                                  :minWidth 800
-                                  :height 600
-                                  :minHeight 600
+                                  :width 1280
+                                  :minWidth 1280
+                                  :height 720
+                                  :minHeight 720
                                   ; TODO: meaningful menus
                                   :autoHideMenuBar true
                                   :icon (str js/__dirname "/public/img/gitt.png")
