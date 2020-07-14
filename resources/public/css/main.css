@@ -237,7 +237,7 @@ body {
 
 .commits ol {
   flex: 1 1 100%;
-  min-width: 0;
+  min-width: 300px;
   height: max-content;
 }
 
@@ -316,4 +316,8 @@ dialog div {
 
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+#selected-commit-pane {
+  width: 350px;
 }

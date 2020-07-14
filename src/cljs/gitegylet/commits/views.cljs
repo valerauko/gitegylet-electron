@@ -9,6 +9,14 @@
             [gitegylet.branches.views :refer [create-branch-modal]]
             [gitegylet.commits.db :refer [commit->map]]))
 
+(defn selected-commit-pane
+  []
+  [:div
+   {:id "selected-commit-pane"}
+   (if-let [id @(rf/subscribe [::subs/selected])]
+     id
+     "wt <> idx")])
+
 (defn index-by-id
   [commits]
   (reduce
@@ -42,6 +50,7 @@
   []
   (let [commits @(rf/subscribe [::subs/commits])
         head @(rf/subscribe [::subs/head])
+        selected-id @(rf/subscribe [::subs/selected])
         statuses @(rf/subscribe [::repo/statuses])
         branches @(rf/subscribe [::branches/selected])
         indexed-branches (group-by :commit-id branches)]
@@ -216,8 +225,7 @@
                       :on-context-menu commit-menu
                       :on-click #(rf/dispatch [::events/toggle-select
                                                (:id commit)])
-                      :class [(when (= (:id commit)
-                                       @(rf/subscribe [::subs/selected]))
+                      :class [(when (= (:id commit) selected-id)
                                 "selected")]}
                      (some->> relevant-branches
                               (map (fn [branch]
