@@ -1,5 +1,4 @@
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Debug)]
 pub struct Status {
