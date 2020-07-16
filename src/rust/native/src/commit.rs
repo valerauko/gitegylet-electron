@@ -3,7 +3,9 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
+use git2::{Delta};
 use md5::{Digest, Md5};
+use crate::{status::Status};
 
 #[derive(Clone)]
 pub struct Commit {
@@ -110,6 +112,48 @@ impl Commit {
                 commit
             })
             .collect()
+    }
+
+    pub fn diff_files<'a>(repo: git2::Repository, commit_id: String) -> Vec<Status> {
+        let commit = repo.find_commit(git2::Oid::from_str(&commit_id).unwrap()).unwrap();
+        let commit_tree = commit.tree().unwrap();
+
+        let mut opts = git2::DiffOptions::new();
+        opts.minimal(true)
+            .skip_binary_check(true)
+            .include_untracked(true);
+
+        // fuck the borrow checker with a dragon dildo
+        let diff = match commit.parent(0) {
+            Ok(parent) => {
+                repo.diff_tree_to_tree(Some(&parent.tree().unwrap()), Some(&commit_tree), Some(&mut opts)).unwrap()
+            }
+            Err(e) => {
+                println!("{}", e);
+                repo.diff_tree_to_tree(None, Some(&commit_tree), Some(&mut opts)).unwrap()
+            }
+        };
+        let mut files: Vec<Status> = vec![];
+        diff.foreach(
+            &mut |delta: git2::DiffDelta, _| {
+                let status = match delta.status() {
+                    Delta::Added | Delta::Copied => "new",
+                    Delta::Deleted | Delta::Ignored => "deleted",
+                    Delta::Modified => "modified",
+                    Delta::Renamed => "renamed",
+                    Delta::Conflicted => "conflicted",
+                    _ => "other"
+                }.to_string();
+                files.push(Status {
+                    file: delta.new_file().path().unwrap().to_string_lossy().to_string(),
+                    status
+                });
+                true
+            },
+            None, None, None
+        ).unwrap();
+
+        return files
     }
 }
 
