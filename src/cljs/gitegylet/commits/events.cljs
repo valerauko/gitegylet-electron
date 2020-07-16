@@ -1,5 +1,6 @@
 (ns gitegylet.commits.events
   (:require [re-frame.core :as rf]
+            [gitegylet.repo.db :refer [status->map]]
             [gitegylet.git :refer [git]]
             [gitegylet.inject :as inject]
             [gitegylet.events :refer [persist]]
@@ -40,10 +41,18 @@
     {:db (assoc db :visible-commits (or visible-commits []))
      :dispatch [::reload-head]}))
 
-(rf/reg-event-db
+(rf/reg-event-fx
   ::toggle-select
-  [persist
-   (rf/path :selected-commit)]
-  (fn [current-selected [_ new-selected]]
-    (when-not (= current-selected new-selected)
-      new-selected)))
+  [persist]
+  (fn [{{:keys [selected-commit] :as db} :db} [_ new-selected]]
+    (when-not (= selected-commit new-selected)
+      {:db (assoc db :selected-commit new-selected)
+       :dispatch [::load-diff-files new-selected]})))
+
+(rf/reg-event-fx
+  ::load-diff-files
+  [persist]
+  (fn [{{:keys [repo] :as db} :db} [_ commit-id]]
+    (when-let [files (and commit-id (.commitDiff git repo commit-id))]
+      {:db (assoc-in db [:diff-files commit-id]
+                     (map status->map files))})))
