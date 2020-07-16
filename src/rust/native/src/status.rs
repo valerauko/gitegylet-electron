@@ -2,8 +2,8 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 #[derive(Clone, Debug)]
 pub struct Status {
-    file: String,
-    status: String,
+    pub file: String,
+    pub status: String,
 }
 
 impl Status {
