@@ -5,12 +5,12 @@
 
 (rf/reg-sub
   ::commits
-  (fn [{:keys [visible-commits] :as db} _]
+  (fn [{:keys [visible-commits] :as db}]
     visible-commits))
 
 (rf/reg-sub
   ::head
-  (fn [{:keys [head]} _]
+  (fn [{:keys [head]}]
     head))
 
 (rf/reg-sub
