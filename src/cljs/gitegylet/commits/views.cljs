@@ -199,7 +199,8 @@
          (into (if (empty? statuses)
                  []
                  [[:li
-                   {:key (gensym)}
+                   {:key (gensym)
+                    :on-click #(rf/dispatch [::events/toggle-select])}
                    (->> statuses
                         (reduce
                          (fn [aggr {:keys [status]}]
