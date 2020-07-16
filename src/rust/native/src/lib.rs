@@ -105,6 +105,25 @@ fn create_branch(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     Ok(cx.undefined())
 }
 
+fn commit_diff(mut cx: FunctionContext) -> JsResult<JsArray> {
+    let js_path: Handle<JsString> = cx.argument(0)?;
+    let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
+    let repo = git2::Repository::open(&repo_path).unwrap();
+
+    let js_commit_id: Handle<JsString> = cx.argument(1)?;
+    let commit_id: String = js_commit_id.downcast::<JsString>().unwrap().value();
+
+    let files = Commit::diff_files(repo, commit_id);
+
+    let js_array = JsArray::new(&mut cx, files.len() as u32);
+    for (i, status) in files.iter().enumerate() {
+        let js_status = neon_serde::to_value(&mut cx, &status)?;
+        js_array.set(&mut cx, i as u32, js_status)?;
+    }
+
+    Ok(js_array)
+}
+
 fn statuses(mut cx: FunctionContext) -> JsResult<JsArray> {
     let js_path: Handle<JsString> = cx.argument(0)?;
     let repo_path: String = js_path.downcast::<JsString>().unwrap().value();
@@ -126,6 +145,7 @@ register_module!(mut m, {
     m.export_function("createBranch", create_branch)?;
     m.export_function("fetch", fetch)?;
     m.export_function("commits", commits)?;
+    m.export_function("commitDiff", commit_diff)?;
     m.export_function("statuses", statuses)?;
     m.export_function("head", head)?;
     Ok(())
