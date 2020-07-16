@@ -9,13 +9,27 @@
             [gitegylet.branches.views :refer [create-branch-modal]]
             [gitegylet.commits.db :refer [commit->map]]))
 
+(defn modified-tree
+  [statuses]
+  [:ol
+   (map
+    (fn [{:keys [file status]}]
+      [:li {:key (gensym)} (str file ": " status)])
+    statuses)])
+
 (defn selected-commit-pane
   []
   [:div
    {:id "selected-commit-pane"}
    (if-let [id @(rf/subscribe [::subs/selected])]
-     id
-     "wt <> idx")])
+     (let [;; FIXME: this needs to be optimized
+           commit (first (filter #(= (:id %) id) @(rf/subscribe [::subs/commits])))
+           statuses @(rf/subscribe [::subs/diff-files id])]
+       [:div
+        [:p (:message commit)]
+        (modified-tree statuses)])
+     (let [statuses @(rf/subscribe [::repo/statuses])]
+       (modified-tree statuses)))])
 
 (defn index-by-id
   [commits]
