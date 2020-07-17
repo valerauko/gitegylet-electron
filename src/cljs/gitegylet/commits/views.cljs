@@ -26,7 +26,17 @@
            commit (first (filter #(= (:id %) id) @(rf/subscribe [::subs/commits])))
            statuses @(rf/subscribe [::subs/diff-files id])]
        [:div
-        [:p (:message commit)]
+        [:p
+         (:summary commit)
+         [:br]
+         (-> commit :message (split #"[\n\r]+") rest)]
+        [:p
+         (:name (:author commit))
+         [:br]
+         (->> (:time commit)
+              (* 1000)
+              (new js/Date)
+              (.toISOString))]
         (modified-tree statuses)])
      (let [statuses @(rf/subscribe [::repo/statuses])]
        (modified-tree statuses)))])
