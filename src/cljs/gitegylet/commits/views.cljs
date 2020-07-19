@@ -29,7 +29,9 @@
         [:p
          (:summary commit)
          [:br]
-         (-> commit :message (split #"[\n\r]+") rest)]
+         (-> commit :message (split #"[\n\r]+") rest)
+         [:br]
+         (:id commit)]
         [:p
          (:name (:author commit))
          [:br]
