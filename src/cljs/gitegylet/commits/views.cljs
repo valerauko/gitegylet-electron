@@ -226,7 +226,8 @@
                  []
                  [[:li
                    {:key (gensym)
-                    :on-click #(rf/dispatch [::events/toggle-select])}
+                    :on-click #(rf/dispatch [::events/toggle-select])
+                    :class [(when-not selected-id "selected")]}
                    (->> statuses
                         (reduce
                          (fn [aggr {:keys [status]}]
