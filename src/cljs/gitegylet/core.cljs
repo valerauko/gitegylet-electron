@@ -7,7 +7,7 @@
             [gitegylet.events :as events]
             [gitegylet.repo.events]))
 
-; (set! *warn-on-infer* true)
+(set! *warn-on-infer* true)
 
 ; receive ipc message from main
 ; sent from electron/events.cljs
