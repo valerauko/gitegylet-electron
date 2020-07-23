@@ -45,13 +45,14 @@
 
 (defn index-by-id
   [commits]
-  (reduce
-   (fn id-indexer
-     [aggr commit]
-     (let [commit-id (:id commit)]
-       (assoc aggr commit-id commit)))
-   {}
-   commits))
+  (->> commits
+       (reduce
+        (fn id-indexer
+          [aggr commit]
+          (let [commit-id (:id commit)]
+            (assoc! aggr commit-id commit)))
+        (transient {}))
+       (persistent!)))
 
 (defn color
   ([i] (color i -1))
