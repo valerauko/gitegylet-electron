@@ -1,5 +1,6 @@
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::collections::{HashMap, HashSet};
+
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 #[derive(Clone, Debug)]
 pub struct Branch {
@@ -75,7 +76,7 @@ impl Branch {
                 Ok(b) => {
                     aggr.push(b);
                     aggr
-                },
+                }
                 Err(e) => {
                     println!("{}", e);
                     aggr
@@ -118,7 +119,7 @@ impl Branch {
             .for_each(|remote_name| match repo.find_remote(remote_name) {
                 Ok(mut remote) => match remote.fetch(&branch_by_remote[remote_name], None, None) {
                     Err(e) => println!("{}", e),
-                    _ => {},
+                    _ => {}
                 },
                 Err(e) => println!("{}", e),
             })
@@ -130,10 +131,10 @@ impl Branch {
                 let mut options = git2::build::CheckoutBuilder::default();
                 options.force();
                 match repo.checkout_head(Some(&mut options)) {
-                    Ok(_) => {},
+                    Ok(_) => {}
                     Err(e) => println!("{}", e),
                 }
-            },
+            }
             Err(e) => println!("{}", e),
         }
     }

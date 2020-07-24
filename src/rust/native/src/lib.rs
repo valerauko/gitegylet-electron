@@ -1,11 +1,11 @@
 use neon::prelude::*;
 use neon::register_module;
 
+use crate::{branch::Branch, commit::Commit, status::Status};
+
 mod branch;
 mod commit;
 mod status;
-
-use crate::{branch::Branch, commit::Commit, status::Status};
 
 fn head(mut cx: FunctionContext) -> JsResult<JsValue> {
     let js_path: Handle<JsString> = cx.argument(0)?;

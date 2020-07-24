@@ -1,11 +1,11 @@
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use git2::{Delta};
+use git2::Delta;
 use md5::{Digest, Md5};
-use crate::{status::Status};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+
+use crate::status::Status;
 
 #[derive(Clone)]
 pub struct Commit {
@@ -71,10 +71,10 @@ impl Commit {
                                     ids.insert(*parent_id);
                                     heap.push(Self::from_git2(parent));
                                 }
-                                Err(e) => println!("{}", e)
+                                Err(e) => println!("{}", e),
                             }
                         }
-                    };
+                    }
                     commits.push(commit);
                 }
                 None => break,
@@ -115,7 +115,9 @@ impl Commit {
     }
 
     pub fn diff_files<'a>(repo: git2::Repository, commit_id: String) -> Vec<Status> {
-        let commit = repo.find_commit(git2::Oid::from_str(&commit_id).unwrap()).unwrap();
+        let commit = repo
+            .find_commit(git2::Oid::from_str(&commit_id).unwrap())
+            .unwrap();
         let commit_tree = commit.tree().unwrap();
 
         let mut opts = git2::DiffOptions::new();
@@ -125,12 +127,17 @@ impl Commit {
 
         // fuck the borrow checker with a dragon dildo
         let diff = match commit.parent(0) {
-            Ok(parent) => {
-                repo.diff_tree_to_tree(Some(&parent.tree().unwrap()), Some(&commit_tree), Some(&mut opts)).unwrap()
-            }
+            Ok(parent) => repo
+                .diff_tree_to_tree(
+                    Some(&parent.tree().unwrap()),
+                    Some(&commit_tree),
+                    Some(&mut opts),
+                )
+                .unwrap(),
             Err(e) => {
                 println!("{}", e);
-                repo.diff_tree_to_tree(None, Some(&commit_tree), Some(&mut opts)).unwrap()
+                repo.diff_tree_to_tree(None, Some(&commit_tree), Some(&mut opts))
+                    .unwrap()
             }
         };
         let mut files: Vec<Status> = vec![];
@@ -142,18 +149,27 @@ impl Commit {
                     Delta::Modified => "modified",
                     Delta::Renamed => "renamed",
                     Delta::Conflicted => "conflicted",
-                    _ => "other"
-                }.to_string();
+                    _ => "other",
+                }
+                .to_string();
                 files.push(Status {
-                    file: delta.new_file().path().unwrap().to_string_lossy().to_string(),
-                    status
+                    file: delta
+                        .new_file()
+                        .path()
+                        .unwrap()
+                        .to_string_lossy()
+                        .to_string(),
+                    status,
                 });
                 true
             },
-            None, None, None
-        ).unwrap();
+            None,
+            None,
+            None,
+        )
+        .unwrap();
 
-        return files
+        return files;
     }
 }
 
