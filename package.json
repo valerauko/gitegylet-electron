@@ -20,14 +20,14 @@
   "author": "Balint Erdos <valerauko@gmail.com>",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron": "^9.0.3",
+    "electron": "^10.0.0",
     "electron-build-env": "^0.2.0",
     "electron-builder": "^22.7.0",
     "shadow-cljs": "^2.10.5"
   },
   "dependencies": {
     "git": "file:./src/rust",
-    "highlight.js": "9.18.1",
+    "highlight.js": "^10.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-highlight.js": "1.0.7"
