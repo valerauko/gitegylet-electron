@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "git": "file:./src/rust",
-    "highlight.js": "^10.2.1",
+    "highlight.js": "^10.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-highlight.js": "1.0.7"
