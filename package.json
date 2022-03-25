@@ -20,7 +20,7 @@
   "author": "Balint Erdos <valerauko@gmail.com>",
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
-    "electron": "^10.2.0",
+    "electron": "^13.6.6",
     "electron-build-env": "^0.2.0",
     "electron-builder": "^22.7.0",
     "shadow-cljs": "^2.10.5"
